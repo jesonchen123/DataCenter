@@ -104,12 +104,12 @@
 - Produces: `normalize_text(text: str) -> str`
 - Produces: `desensitize_text(text: str) -> tuple[str, bool]`
 
-- [ ] Step 1: Write failing cleaning tests for empty messages, duplicates, system prompts, simple greetings, and punctuation normalization.
-- [ ] Step 2: Write failing desensitization tests for phone, email, QQ, WeChat ID, order number, and ID card.
-- [ ] Step 3: Run `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`.
-- [ ] Step 4: Implement cleaning and desensitization services.
-- [ ] Step 5: Run `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`.
-- [ ] Step 6: Commit with `feat: add cleaning and desensitization services`.
+- [x] Step 1: Write failing cleaning tests for empty messages, duplicates, system prompts, simple greetings, and punctuation normalization.
+- [x] Step 2: Write failing desensitization tests for phone, email, QQ, WeChat ID, order number, and ID card.
+- [x] Step 3: Run `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`.
+- [x] Step 4: Implement cleaning and desensitization services.
+- [x] Step 5: Run `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`.
+- [x] Step 6: Commit with `feat: add cleaning and desensitization services`.
 
 ## Task 5: Deterministic Knowledge Generation And Export Validation
 
