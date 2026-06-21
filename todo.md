@@ -85,11 +85,11 @@
 - Produces: `filter_price_content(text: str) -> PriceFilterResult`
 - Produces: `contains_original_price(text: str) -> bool`
 
-- [ ] Step 1: Write failing tests for amount, discount, preferential price, contract amount, payment term, rebate, commission, and customer price intent.
-- [ ] Step 2: Run `python -m unittest tests.test_price_filter_service`.
-- [ ] Step 3: Implement regex-based price detection and sentence filtering.
-- [ ] Step 4: Run `python -m unittest tests.test_price_filter_service`.
-- [ ] Step 5: Commit with `feat: add price filtering service`.
+- [x] Step 1: Write failing tests for amount, discount, preferential price, contract amount, payment term, rebate, commission, and customer price intent.
+- [x] Step 2: Run `python -m unittest tests.test_price_filter_service`.
+- [x] Step 3: Implement regex-based price detection and sentence filtering.
+- [x] Step 4: Run `python -m unittest tests.test_price_filter_service`.
+- [x] Step 5: Commit with `feat: add price filtering service`.
 
 ## Task 4: Cleaning And Desensitization Services
 
