@@ -50,7 +50,7 @@
 - [x] Step 2: Create app package skeleton.
 - [x] Step 3: Create FastAPI app factory with health endpoint.
 - [x] Step 4: Run `python -m unittest discover -s tests`.
-- [ ] Step 5: Commit with `chore: scaffold backend project`.
+- [x] Step 5: Commit with `chore: scaffold backend project`.
 
 ## Task 2: Core Domain Types And Permission Rules
 
@@ -66,11 +66,11 @@
 - Produces: `can_approve(role: str) -> bool`
 - Produces: `can_view_audit_logs(role: str) -> bool`
 
-- [ ] Step 1: Write failing permission tests for `manager` and `normal_user`.
-- [ ] Step 2: Run `python -m unittest tests.test_permissions`.
-- [ ] Step 3: Implement enums and permission helpers.
-- [ ] Step 4: Run `python -m unittest tests.test_permissions`.
-- [ ] Step 5: Commit with `feat: add role permission rules`.
+- [x] Step 1: Write failing permission tests for `manager` and `normal_user`.
+- [x] Step 2: Run `python -m unittest tests.test_permissions`.
+- [x] Step 3: Implement enums and permission helpers.
+- [x] Step 4: Run `python -m unittest tests.test_permissions`.
+- [x] Step 5: Commit with `feat: add role permission rules`.
 
 ## Task 3: Price Filtering Service
 
