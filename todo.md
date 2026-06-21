@@ -124,12 +124,12 @@
 - Produces: `validate_exportable(doc: dict, requester_role: str) -> None`
 - Produces: `build_export_content(docs: list[dict], created_by: str) -> dict`
 
-- [ ] Step 1: Write failing tests for price-intent knowledge docs and non-price business docs.
-- [ ] Step 2: Write failing export validation tests for role, review status, desensitization, price filtering, original price, and high-risk approval.
-- [ ] Step 3: Run `python -m unittest tests.test_knowledge_service tests.test_export_service`.
-- [ ] Step 4: Implement deterministic knowledge generation and export validation.
-- [ ] Step 5: Run `python -m unittest tests.test_knowledge_service tests.test_export_service`.
-- [ ] Step 6: Commit with `feat: add knowledge generation and export validation`.
+- [x] Step 1: Write failing tests for price-intent knowledge docs and non-price business docs.
+- [x] Step 2: Write failing export validation tests for role, review status, desensitization, price filtering, original price, and high-risk approval.
+- [x] Step 3: Run `python -m unittest tests.test_knowledge_service tests.test_export_service`.
+- [x] Step 4: Implement deterministic knowledge generation and export validation.
+- [x] Step 5: Run `python -m unittest tests.test_knowledge_service tests.test_export_service`.
+- [x] Step 6: Commit with `feat: add knowledge generation and export validation`.
 
 ## Task 6: SQLAlchemy Models And Alembic Migration
 
