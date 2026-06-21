@@ -19,6 +19,9 @@ services:
     build: .
     env_file:
       - .env.example
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@postgres:5432/chat_data_platform
+      REDIS_URL: redis://redis:6379/0
     depends_on:
       - postgres
       - redis
@@ -32,6 +35,9 @@ services:
     build: .
     env_file:
       - .env.example
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@postgres:5432/chat_data_platform
+      REDIS_URL: redis://redis:6379/0
     depends_on:
       - postgres
       - redis

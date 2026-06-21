@@ -9,7 +9,8 @@ class SettingsTest(unittest.TestCase):
 
         self.assertEqual(settings.app_name, "chat-data-platform")
         self.assertIn("postgresql+psycopg2://", settings.database_url)
-        self.assertEqual(settings.redis_url, "redis://localhost:6379/0")
+        self.assertTrue(settings.redis_url.startswith("redis://"))
+        self.assertTrue(settings.redis_url.endswith("/0"))
 
 
 if __name__ == "__main__":

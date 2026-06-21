@@ -72,6 +72,42 @@ Or start the full backend stack:
 docker compose up --build
 ```
 
+## Docker Workflow
+
+The Dockerfile uses the Tsinghua PyPI mirror by default to avoid slow downloads from `files.pythonhosted.org`. Override it when needed:
+
+```bash
+docker compose build --build-arg PIP_INDEX_URL=https://pypi.org/simple
+```
+
+Build and run tests in Docker:
+
+```bash
+docker compose build
+docker compose run --rm backend python -m unittest discover -s tests
+docker compose run --rm backend python -m compileall app tests
+```
+
+Run database migrations and seed data in Docker:
+
+```bash
+docker compose up -d postgres redis
+docker compose run --rm backend alembic upgrade head
+docker compose run --rm backend python -m app.db.init_db
+```
+
+Start the API and worker:
+
+```bash
+docker compose up -d backend celery_worker
+```
+
+Health check:
+
+```bash
+curl http://localhost:8000/health
+```
+
 ## API Surface
 
 - `GET /health`
@@ -96,4 +132,4 @@ For local development before JWT auth is finalized, protected routes read role i
 
 ## Verification Notes
 
-This environment currently does not have FastAPI, SQLAlchemy, Alembic, Celery, or pytest installed. The pure service layer is covered by standard-library `unittest`; dependency-backed API/database smoke checks should be run after `pip install -r requirements.txt` or inside Docker.
+The pure service layer is covered by standard-library `unittest`; dependency-backed API/database smoke checks can be run after `pip install -r requirements.txt` or inside Docker.
