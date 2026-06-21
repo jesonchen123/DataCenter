@@ -169,11 +169,11 @@
 - Produces: `build_mock_chats() -> list[dict]`
 - Produces: `python -m app.db.init_db`
 
-- [ ] Step 1: Write failing tests that at least 20 Mock chats are generated and cover product consulting, after-sales, price consulting, and customer objections.
-- [ ] Step 2: Run `python -m unittest tests.test_mock_data_service`.
-- [ ] Step 3: Implement deterministic Mock data builder and database seeding command.
-- [ ] Step 4: Run `python -m unittest tests.test_mock_data_service`.
-- [ ] Step 5: Commit with `feat: add mock data seed builder`.
+- [x] Step 1: Write failing tests that at least 20 Mock chats are generated and cover product consulting, after-sales, price consulting, and customer objections.
+- [x] Step 2: Run `python -m unittest tests.test_mock_data_service`.
+- [x] Step 3: Implement deterministic Mock data builder and database seeding command.
+- [x] Step 4: Run `python -m unittest tests.test_mock_data_service`.
+- [x] Step 5: Commit with `feat: add mock data seed builder`.
 
 ## Task 8: Processing Pipeline And Celery Task
 
