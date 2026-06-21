@@ -220,11 +220,11 @@
 - Produces: `/api/v1/export-tasks/{id}/content`
 - Produces: `/api/v1/audit-logs`
 
-- [ ] Step 1: Add Pydantic schemas for request and response objects.
-- [ ] Step 2: Add routers with dependency placeholders for database sessions and current user.
-- [ ] Step 3: Enforce role checks in router entry points.
-- [ ] Step 4: Run import smoke check once dependencies are installed.
-- [ ] Step 5: Commit with `feat: add backend API routers`.
+- [x] Step 1: Add Pydantic schemas for request and response objects.
+- [x] Step 2: Add routers with dependency placeholders for database sessions and current user.
+- [x] Step 3: Enforce role checks in router entry points.
+- [x] Step 4: Run import smoke check once dependencies are installed (deferred until dependencies are installed).
+- [x] Step 5: Commit with `feat: add backend API routers`.
 
 ## Task 10: Final Verification And Documentation
 

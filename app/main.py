@@ -16,6 +16,23 @@ def create_app():
     def health_check() -> dict[str, str]:
         return {"status": "ok", "app": settings.app_name}
 
+    from app.api.v1.audit_logs import router as audit_logs_router
+    from app.api.v1.auth import router as auth_router
+    from app.api.v1.export_tasks import router as export_tasks_router
+    from app.api.v1.knowledge_docs import router as knowledge_docs_router
+    from app.api.v1.mock_chats import router as mock_chats_router
+    from app.api.v1.process_tasks import router as process_tasks_router
+
+    for router in [
+        auth_router,
+        mock_chats_router,
+        process_tasks_router,
+        knowledge_docs_router,
+        export_tasks_router,
+        audit_logs_router,
+    ]:
+        api.include_router(router, prefix="/api/v1")
+
     return api
 
 
