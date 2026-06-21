@@ -235,8 +235,8 @@
 **Interfaces:**
 - Produces documented local commands for tests, Docker, migrations, seed data, API, worker, and export.
 
-- [ ] Step 1: Run `python -m unittest discover -s tests`.
-- [ ] Step 2: Update README with local and Docker usage.
-- [ ] Step 3: Mark all completed `todo.md` tasks.
-- [ ] Step 4: Run `git status --short`.
-- [ ] Step 5: Commit with `docs: document backend mvp usage`.
+- [x] Step 1: Run `python -m unittest discover -s tests`.
+- [x] Step 2: Update README with local and Docker usage.
+- [x] Step 3: Mark all completed `todo.md` tasks.
+- [x] Step 4: Run `git status --short`.
+- [x] Step 5: Commit with `docs: document backend mvp usage`.
