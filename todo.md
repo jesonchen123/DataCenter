@@ -188,12 +188,12 @@
 - Produces: `process_mock_chat_payload(payload: dict) -> dict`
 - Produces: Celery task `process_mock_chat_task(process_task_id: str) -> dict`
 
-- [ ] Step 1: Write failing pipeline tests for parse, clean, desensitize, price filter, segment, and knowledge output.
-- [ ] Step 2: Run `python -m unittest tests.test_processing_pipeline`.
-- [ ] Step 3: Implement dependency-free payload pipeline.
-- [ ] Step 4: Add Celery app and task wrapper for database-backed execution.
-- [ ] Step 5: Run `python -m unittest tests.test_processing_pipeline`.
-- [ ] Step 6: Commit with `feat: add mock chat processing pipeline`.
+- [x] Step 1: Write failing pipeline tests for parse, clean, desensitize, price filter, segment, and knowledge output.
+- [x] Step 2: Run `python -m unittest tests.test_processing_pipeline`.
+- [x] Step 3: Implement dependency-free payload pipeline.
+- [x] Step 4: Add Celery app and task wrapper for database-backed execution.
+- [x] Step 5: Run `python -m unittest tests.test_processing_pipeline`.
+- [x] Step 6: Commit with `feat: add mock chat processing pipeline`.
 
 ## Task 9: API Schemas And Routers
 
