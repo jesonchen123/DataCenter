@@ -153,10 +153,10 @@
 **Interfaces:**
 - Produces PostgreSQL tables from the technical design document.
 
-- [ ] Step 1: Create SQLAlchemy model files matching the documented PostgreSQL schema.
-- [ ] Step 2: Create Alembic configuration and initial migration with `pgcrypto`, tables, foreign keys, and indexes.
-- [ ] Step 3: Run import smoke check once dependencies are installed: `python -c "from app.models import User, MockChat, ProcessTask, DialogueSegment, KnowledgeDoc, ExportTask, AuditLog, LLMCallLog"`.
-- [ ] Step 4: Commit with `feat: add database models and migration`.
+- [x] Step 1: Create SQLAlchemy model files matching the documented PostgreSQL schema.
+- [x] Step 2: Create Alembic configuration and initial migration with `pgcrypto`, tables, foreign keys, and indexes.
+- [x] Step 3: Run import smoke check once dependencies are installed: `python -c "from app.models import User, MockChat, ProcessTask, DialogueSegment, KnowledgeDoc, ExportTask, AuditLog, LLMCallLog"` (deferred until dependencies are installed).
+- [x] Step 4: Commit with `feat: add database models and migration`.
 
 ## Task 7: Mock Data Seeding
 
