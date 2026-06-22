@@ -1,4 +1,5 @@
 from app.services.processing_pipeline import process_mock_chat_payload
+from app.services.persistence_service import persist_pipeline_result
 from app.workers.celery_app import celery_app
 
 
@@ -24,11 +25,7 @@ def _process_mock_chat_task(process_task_id: str) -> dict:
         task = db.query(ProcessTask).filter(ProcessTask.id == process_task_id).one()
         chat = db.query(MockChat).filter(MockChat.id == task.mock_chat_id).one()
         result = process_mock_chat_payload(chat.raw_content)
-        task.status = "success"
-        task.current_step = "completed"
-        task.progress = 100
-        task.step_result = result
-        db.commit()
+        persist_pipeline_result(db, task, result)
         return result
     except Exception as exc:
         db.rollback()

@@ -266,11 +266,11 @@
 
 ## 任务 13：处理结果持久化
 
-- [ ] 步骤 1：编写失败测试，验证流水线结果会转换为待持久化结构。
-- [ ] 步骤 2：运行 `python -m unittest tests.test_persistence_service`，确认失败。
-- [ ] 步骤 3：实现持久化服务并接入 worker。
-- [ ] 步骤 4：运行单元测试和 Docker 数据库验证。
-- [ ] 步骤 5：提交，提交信息为 `feat: persist processing results`。
+- [x] 步骤 1：编写失败测试，验证流水线结果会转换为待持久化结构。
+- [x] 步骤 2：运行 `python -m unittest tests.test_persistence_service`，确认失败。
+- [x] 步骤 3：实现持久化服务并接入 worker。
+- [x] 步骤 4：运行单元测试和 Docker 数据库验证。
+- [x] 步骤 5：提交，提交信息为 `feat: persist processing results`。
 
 ## 任务 14：知识文档审核 API 落库
 
