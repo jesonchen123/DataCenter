@@ -1,7 +1,8 @@
 try:
-    from pydantic import BaseModel, Field
+    from pydantic import BaseModel, ConfigDict, Field
 except ModuleNotFoundError:  # pragma: no cover
     BaseModel = object
+    ConfigDict = dict
 
     def Field(default=None, **_kwargs):
         return default
@@ -29,9 +30,10 @@ class MockChatResponse(BaseModel):
 
 
 class ManualMockChatMessageRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     role: str
     sender: str | None = None
-    time: str | None = None
     text: str
 
 

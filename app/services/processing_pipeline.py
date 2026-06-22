@@ -9,18 +9,21 @@ def process_mock_chat_payload(payload: dict, knowledge_generator=None) -> dict:
     generator = knowledge_generator or generate_knowledge_doc
     messages = clean_messages(payload.get("messages", []))
     original_content = _join_messages(messages, "content")
-    desensitized_content, contains_sensitive = desensitize_text(original_content)
+    customer_question = _first_by_role(messages, "customer")
+    staff_answer = _first_by_role(messages, "staff")
+    cleaned_content = _qa_content(customer_question, staff_answer)
+    desensitized_content, contains_sensitive = desensitize_text(cleaned_content)
     price_result = filter_price_content(desensitized_content)
 
     segment = {
         "segment_no": f"seg_{payload.get('mock_chat_id', 'mock')}_001",
         "mock_chat_id": payload.get("mock_chat_id"),
         "original_content": original_content,
-        "cleaned_content": original_content,
+        "cleaned_content": cleaned_content,
         "desensitized_content": desensitized_content,
         "price_filtered_content": price_result.filtered_text,
-        "customer_question": _first_by_role(messages, "customer"),
-        "staff_answer": _first_by_role(messages, "staff"),
+        "customer_question": customer_question,
+        "staff_answer": staff_answer,
         "business_line": payload.get("business_line"),
         "product_name": payload.get("product_name"),
         "tags": ["mock", "auto_generated"],
@@ -58,3 +61,12 @@ def _first_by_role(messages: list[dict], role: str) -> str:
         if message.get("sender_role") == role:
             return str(message.get("content") or "")
     return ""
+
+
+def _qa_content(customer_question: str, staff_answer: str) -> str:
+    parts = []
+    if customer_question:
+        parts.append(f"客户问：{customer_question}")
+    if staff_answer:
+        parts.append(f"销售答：{staff_answer}")
+    return "\n".join(parts)

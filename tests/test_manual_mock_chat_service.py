@@ -13,8 +13,8 @@ class ManualMockChatServiceTest(unittest.TestCase):
                 "product_name": "测试产品",
                 "scenario_type": "price_consulting",
                 "messages": [
-                    {"role": "customer", "sender": "客户A", "time": "2026-06-22T10:00:00+08:00", "text": "这个产品多少钱？"},
-                    {"role": "staff", "sender": "销售A", "time": "2026-06-22T10:01:00+08:00", "text": "历史报价 9800 元，测试过滤。"},
+                    {"role": "customer", "sender": "客户A", "text": "这个产品多少钱？"},
+                    {"role": "staff", "sender": "销售A", "text": "历史报价 9800 元，测试过滤。"},
                 ],
             }
         )
@@ -29,8 +29,8 @@ class ManualMockChatServiceTest(unittest.TestCase):
         self.assertEqual(messages[0]["message_id"], "custom_chat_001_msg_001")
         self.assertEqual(messages[0]["sender_role"], "customer")
         self.assertEqual(messages[0]["sender_name"], "客户A")
-        self.assertEqual(messages[0]["message_time"], "2026-06-22T10:00:00+08:00")
         self.assertEqual(messages[0]["content"], "这个产品多少钱？")
+        self.assertNotIn("message_time", messages[0])
 
     def test_rejects_empty_messages(self):
         with self.assertRaises(ValueError):
@@ -68,6 +68,22 @@ class ManualMockChatServiceTest(unittest.TestCase):
                             "message_id": "msg_001",
                             "sender_role": "customer",
                             "content": "旧格式不再支持",
+                        }
+                    ],
+                }
+            )
+
+    def test_rejects_time_field_in_simplified_messages(self):
+        with self.assertRaises(ValueError):
+            build_manual_mock_chat_values(
+                {
+                    "mock_chat_id": "custom_chat_time",
+                    "messages": [
+                        {
+                            "role": "customer",
+                            "sender": "客户A",
+                            "time": "2026-06-22T10:00:00+08:00",
+                            "text": "时间字段不再接收",
                         }
                     ],
                 }

@@ -1,4 +1,5 @@
 _ALLOWED_SENDER_ROLES = {"customer", "staff", "system"}
+_ALLOWED_MESSAGE_FIELDS = {"role", "sender", "text"}
 
 
 def build_manual_mock_chat_values(payload: dict) -> dict:
@@ -38,6 +39,9 @@ def build_manual_mock_chat_values(payload: dict) -> dict:
 def _normalize_message(mock_chat_id: str, message: dict, index: int) -> dict:
     if not isinstance(message, dict):
         raise ValueError("message must be an object.")
+    unexpected_fields = sorted(set(message) - _ALLOWED_MESSAGE_FIELDS)
+    if unexpected_fields:
+        raise ValueError(f"message contains unsupported fields: {', '.join(unexpected_fields)}.")
     sender_role = _required_text(message.get("role"), "role")
     if sender_role not in _ALLOWED_SENDER_ROLES:
         raise ValueError("role must be customer, staff, or system.")
@@ -45,7 +49,6 @@ def _normalize_message(mock_chat_id: str, message: dict, index: int) -> dict:
         "message_id": f"{mock_chat_id}_msg_{index:03d}",
         "sender_role": sender_role,
         "sender_name": _optional_text(message.get("sender")),
-        "message_time": _optional_text(message.get("time")),
         "content": _required_text(message.get("text"), "text"),
     }
 

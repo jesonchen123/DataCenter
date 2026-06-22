@@ -24,7 +24,7 @@ class SuccessfulClient:
     def chat(self, messages, response_format=None):
         return LLMChatResult(
             content=(
-                '{"title":"客户咨询功能","content":"客服应先确认客户使用场景，并说明产品能力。",'
+                '{"title":"客户咨询功能","content":"客户问：这个功能怎么使用？\\n销售答：客服应先确认客户使用场景，并说明产品能力。",'
                 '"question_examples":["这个功能怎么使用？"],"tags":["产品咨询"],'
                 '"risk_level":"low","need_human_review":false}'
             ),
@@ -47,7 +47,7 @@ class UnsafeClient:
     def chat(self, messages, response_format=None):
         return LLMChatResult(
             content=(
-                '{"title":"价格","content":"套餐报价 9800 元。",'
+                '{"title":"价格","content":"客户问：多少钱？\\n销售答：套餐报价 9800 元。",'
                 '"question_examples":["多少钱？"],"tags":["价格咨询"],'
                 '"risk_level":"high","need_human_review":true}'
             ),

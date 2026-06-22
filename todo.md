@@ -392,8 +392,19 @@
 ## 任务 25：删除标准 Mock 聊天 JSON 输入格式
 
 - [x] 步骤 1：改写测试，要求旧的 `message_id/sender_role/content` 输入格式被拒绝。
-- [x] 步骤 2：服务层只接受 `role/text/sender/time` 简化字段。
+- [x] 步骤 2：服务层只接受 `role/text/sender` 简化字段。
 - [x] 步骤 3：Swagger 请求 schema 只展示简化字段。
 - [x] 步骤 4：README 只保留简化 JSON 示例。
 - [x] 步骤 5：运行本地和 Docker 测试，并执行 API 冒烟。
 - [x] 步骤 6：提交，提交信息为 `feat: require simplified mock chat json`。
+
+## 任务 26：过滤时间字段并强制问答化清洗输出
+
+- [x] 步骤 1：编写失败测试，验证简化 JSON 中 `time` 字段被拒绝且不会生成 `message_time`。
+- [x] 步骤 2：编写失败测试，验证清洗段落和确定性知识正文采用 `客户问/销售答` 格式。
+- [x] 步骤 3：编写失败测试，验证 LLM Prompt 不传原始聊天和时间元信息。
+- [x] 步骤 4：编写失败测试，验证 LLM 输出校验拒绝非问答正文、时间和发送人元信息。
+- [x] 步骤 5：实现 schema、手工聊天服务、流水线、知识生成、LLM Prompt 和 LLM 校验改动。
+- [x] 步骤 6：更新 README，说明唯一输入格式和问答化输出规则。
+- [x] 步骤 7：运行本地和 Docker 测试，并执行 API 冒烟。
+- [x] 步骤 8：提交，提交信息为 `feat: enforce qa-only cleaned chat data`。

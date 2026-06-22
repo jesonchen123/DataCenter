@@ -19,6 +19,7 @@ class KnowledgeServiceTest(unittest.TestCase):
         doc = generate_knowledge_doc(segment)
 
         self.assertEqual(doc["title"], "客户咨询价格时的标准回复")
+        self.assertEqual(doc["content"], "客户问：这个产品多少钱？\n销售答：具体价格以公司正式报价为准。")
         self.assertIn("具体价格以公司正式报价为准", doc["content"])
         self.assertTrue(doc["price_filtered"])
         self.assertTrue(doc["contains_price_intent"])
@@ -40,6 +41,7 @@ class KnowledgeServiceTest(unittest.TestCase):
         doc = generate_knowledge_doc(segment)
 
         self.assertEqual(doc["title"], "产品怎么使用？")
+        self.assertEqual(doc["content"], "客户问：产品怎么使用？\n销售答：先登录后台再创建知识库。")
         self.assertIn("先登录后台再创建知识库", doc["content"])
         self.assertFalse(doc["contains_price_intent"])
         self.assertEqual(doc["risk_level"], RiskLevel.LOW.value)

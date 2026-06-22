@@ -71,6 +71,37 @@ class ProcessingPipelineTest(unittest.TestCase):
         self.assertEqual(calls[0]["segment_no"], "seg_mock_chat_llm_001")
         self.assertEqual(result["knowledge_docs"][0]["title"], "LLM 生成标题")
 
+    def test_cleaned_segment_is_customer_staff_qa_without_metadata(self):
+        payload = {
+            "mock_chat_id": "mock_chat_clean_qa",
+            "messages": [
+                {
+                    "message_id": "m1",
+                    "sender_role": "customer",
+                    "sender_name": "客户A",
+                    "message_time": "2026-06-22T10:00:00+08:00",
+                    "content": "产品怎么使用？",
+                },
+                {
+                    "message_id": "m2",
+                    "sender_role": "staff",
+                    "sender_name": "销售A",
+                    "message_time": "2026-06-22T10:01:00+08:00",
+                    "content": "先登录后台，再创建知识库。",
+                },
+            ],
+        }
+
+        result = process_mock_chat_payload(payload)
+
+        segment = result["segments"][0]
+        self.assertEqual(segment["cleaned_content"], "客户问：产品怎么使用？\n销售答：先登录后台，再创建知识库。")
+        self.assertNotIn("2026-06-22", segment["cleaned_content"])
+        self.assertNotIn("客户A", segment["cleaned_content"])
+        self.assertNotIn("销售A", segment["cleaned_content"])
+        self.assertNotIn("message_id", segment["cleaned_content"])
+        self.assertEqual(result["knowledge_docs"][0]["content"], "客户问：产品怎么使用？\n销售答：先登录后台，再创建知识库。")
+
 
 if __name__ == "__main__":
     unittest.main()

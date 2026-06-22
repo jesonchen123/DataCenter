@@ -23,7 +23,7 @@ class LLMValidationServiceTest(unittest.TestCase):
         }
         output = {
             "title": "客户咨询功能",
-            "content": "客服应先确认客户的使用场景，并说明产品能力。",
+            "content": "客户问：这个功能怎么用？\n销售答：先确认客户的使用场景，并说明产品能力。",
             "question_examples": ["这个功能怎么用？"],
             "tags": ["产品咨询"],
             "risk_level": "low",
@@ -41,6 +41,32 @@ class LLMValidationServiceTest(unittest.TestCase):
     def test_validate_llm_knowledge_doc_rejects_missing_required_fields(self):
         with self.assertRaises(ValueError):
             validate_llm_knowledge_doc({"title": "缺少正文"}, {"segment_no": "seg_001"})
+
+    def test_validate_llm_knowledge_doc_rejects_non_qa_content(self):
+        output = {
+            "title": "客户咨询功能",
+            "content": "客服应先确认客户的使用场景，并说明产品能力。",
+            "question_examples": ["这个功能怎么用？"],
+            "tags": ["产品咨询"],
+            "risk_level": "low",
+            "need_human_review": False,
+        }
+
+        with self.assertRaises(ValueError):
+            validate_llm_knowledge_doc(output, {"segment_no": "seg_001"})
+
+    def test_validate_llm_knowledge_doc_rejects_time_and_sender_metadata(self):
+        output = {
+            "title": "客户咨询功能",
+            "content": "客户问：2026-06-22 10:00 客户A 这个功能怎么用？\n销售答：销售A 先确认使用场景。",
+            "question_examples": ["这个功能怎么用？"],
+            "tags": ["产品咨询"],
+            "risk_level": "low",
+            "need_human_review": False,
+        }
+
+        with self.assertRaises(ValueError):
+            validate_llm_knowledge_doc(output, {"segment_no": "seg_001"})
 
     def test_validate_llm_knowledge_doc_rejects_original_price(self):
         output = {

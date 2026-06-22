@@ -10,18 +10,14 @@ def generate_knowledge_doc(segment: dict) -> dict:
 
     if contains_price_info:
         title = "客户咨询价格时的标准回复"
-        doc_content = (
-            "当客户咨询价格时，客服应先确认客户需求、使用场景和采购数量。"
-            "客服不能引用历史聊天记录中的具体报价。"
-            "具体价格以公司正式报价为准。"
-        )
+        doc_content = _qa_content(customer_question or "这个产品多少钱？", "具体价格以公司正式报价为准。")
         tags = ["价格咨询", "售前", "需人工确认"]
         question_examples = [customer_question or "这个产品多少钱？", "有没有优惠？", "可以便宜一点吗？"]
         need_human_review = True
     else:
         title = customer_question or "客户业务咨询"
         staff_answer = str(segment.get("staff_answer") or "").strip()
-        doc_content = staff_answer or content or "需要人工补充"
+        doc_content = _qa_content(customer_question, staff_answer) if customer_question and staff_answer else content or "需要人工补充"
         tags = ["产品咨询"]
         question_examples = [customer_question] if customer_question else []
         need_human_review = doc_content == "需要人工补充"
@@ -54,3 +50,7 @@ def _quality_score(content: str, question_examples: list[str]) -> int:
     if question_examples:
         score += 3
     return min(score, 30)
+
+
+def _qa_content(customer_question: str, staff_answer: str) -> str:
+    return f"客户问：{customer_question}\n销售答：{staff_answer}"

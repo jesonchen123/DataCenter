@@ -20,6 +20,11 @@ _RISK_ORDER = {
     RiskLevel.MEDIUM.value: 2,
     RiskLevel.HIGH.value: 3,
 }
+_TIMESTAMP_RE = re.compile(r"\d{4}[-/年]\d{1,2}[-/月]\d{1,2}|\d{1,2}:\d{2}(?::\d{2})?")
+_METADATA_RE = re.compile(
+    r"(message_id|sender_role|sender_name|message_time|原始聊天|聊天记录|发送人|客户[A-Za-z0-9一二三四五六七八九甲乙丙丁]|销售[A-Za-z0-9一二三四五六七八九甲乙丙丁]|客服[A-Za-z0-9一二三四五六七八九甲乙丙丁])",
+    re.I,
+)
 
 
 def extract_json_object(text: str) -> dict:
@@ -45,6 +50,10 @@ def validate_llm_knowledge_doc(output: dict, segment: dict) -> dict:
     risk_level = _normalize_risk_level(output.get("risk_level"), segment.get("price_risk_level"))
 
     combined_text = "\n".join([title, content, *question_examples, *tags])
+    if not _is_qa_content(content):
+        raise ValueError("LLM output content must use customer/staff QA format.")
+    if _contains_metadata(combined_text):
+        raise ValueError("LLM output contains timestamp or sender metadata.")
     if contains_original_price(combined_text):
         raise ValueError("LLM output contains original price information.")
     _, contains_sensitive = desensitize_text(combined_text)
@@ -95,6 +104,14 @@ def _normalize_risk_level(output_level, segment_level) -> str:
     if segment_value not in _RISK_ORDER:
         segment_value = RiskLevel.NONE.value
     return output_value if _RISK_ORDER[output_value] >= _RISK_ORDER[segment_value] else segment_value
+
+
+def _is_qa_content(content: str) -> bool:
+    return "客户问：" in content and "销售答：" in content
+
+
+def _contains_metadata(text: str) -> bool:
+    return bool(_TIMESTAMP_RE.search(text) or _METADATA_RE.search(text))
 
 
 def _quality_score(content: str, question_examples: list[str]) -> int:

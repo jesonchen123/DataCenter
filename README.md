@@ -188,7 +188,9 @@ Invoke-RestMethod -Headers $headersManager `
   http://localhost:8000/api/v1/audit-logs
 ```
 
-Create a custom Mock chat for local testing. The API only accepts the simplified message format; `message_id` is generated automatically, `role` is converted to `sender_role`, `text` is converted to `content`, and `sender` is converted to `sender_name`.
+Create a custom Mock chat for local testing. The API only accepts the simplified message format: `role`, `sender`, and `text`. `message_id` is generated automatically, `role` is converted to `sender_role`, `text` is converted to `content`, and `sender` is converted to `sender_name`. Time fields such as `time` and `message_time` are rejected so they cannot enter raw or cleaned knowledge data.
+
+Cleaned segments and generated knowledge content use the QA format `客户问：...` and `销售答：...`; sender names, timestamps, message ids, and raw chat metadata are not included in final knowledge content.
 
 ```powershell
 $headersUser = @{ 'x-username' = 'normal_user'; 'x-role' = 'normal_user' }
@@ -203,13 +205,11 @@ $body = @{
     @{
       role = 'customer'
       sender = '客户A'
-      time = '2026-06-22T10:00:00+08:00'
       text = '你们这个产品多少钱？有没有优惠？'
     },
     @{
       role = 'staff'
       sender = '销售A'
-      time = '2026-06-22T10:01:00+08:00'
       text = '之前基础版报价是 9800 元，可以给你打八折。'
     }
   )
