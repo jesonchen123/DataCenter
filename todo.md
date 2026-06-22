@@ -316,13 +316,13 @@
 
 ## 任务 18：安全 Prompt 与 LLM 输出校验
 
-- [ ] 步骤 1：编写失败测试，验证 Prompt 不包含 `original_content`，并包含 `price_filtered_content`。
-- [ ] 步骤 2：编写失败测试，验证 Markdown code fence 中的 JSON 可以被解析。
-- [ ] 步骤 3：编写失败测试，验证缺少必填字段、包含原始价格、包含敏感信息时校验失败。
-- [ ] 步骤 4：运行 `python -m unittest tests.test_llm_prompt_service tests.test_llm_validation_service`，确认失败。
-- [ ] 步骤 5：实现 Prompt 构造和输出校验。
-- [ ] 步骤 6：运行 `python -m unittest tests.test_llm_prompt_service tests.test_llm_validation_service`。
-- [ ] 步骤 7：提交，提交信息为 `feat: add safe llm prompt and validation`。
+- [x] 步骤 1：编写失败测试，验证 Prompt 不包含 `original_content`，并包含 `price_filtered_content`。
+- [x] 步骤 2：编写失败测试，验证 Markdown code fence 中的 JSON 可以被解析。
+- [x] 步骤 3：编写失败测试，验证缺少必填字段、包含原始价格、包含敏感信息时校验失败。
+- [x] 步骤 4：运行 `python -m unittest tests.test_llm_prompt_service tests.test_llm_validation_service`，确认失败。
+- [x] 步骤 5：实现 Prompt 构造和输出校验。
+- [x] 步骤 6：运行 `python -m unittest tests.test_llm_prompt_service tests.test_llm_validation_service`。
+- [x] 步骤 7：提交，提交信息为 `feat: add safe llm prompt and validation`。
 
 ## 任务 19：LLM 知识生成服务与调用日志
 
