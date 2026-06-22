@@ -29,14 +29,10 @@ class MockChatResponse(BaseModel):
 
 
 class ManualMockChatMessageRequest(BaseModel):
-    message_id: str | None = None
-    sender_role: str | None = None
-    role: str | None = None
-    sender_name: str | None = None
+    role: str
     sender: str | None = None
-    message_time: str | None = None
-    content: str | None = None
-    text: str | None = None
+    time: str | None = None
+    text: str
 
 
 class ManualMockChatCreateRequest(BaseModel):

@@ -388,3 +388,12 @@
 - [x] 步骤 4：更新 README 示例。
 - [x] 步骤 5：运行本地和 Docker 测试，并执行 API 冒烟。
 - [x] 步骤 6：提交，提交信息为 `feat: support simplified mock chat json`。
+
+## 任务 25：删除标准 Mock 聊天 JSON 输入格式
+
+- [x] 步骤 1：改写测试，要求旧的 `message_id/sender_role/content` 输入格式被拒绝。
+- [x] 步骤 2：服务层只接受 `role/text/sender/time` 简化字段。
+- [x] 步骤 3：Swagger 请求 schema 只展示简化字段。
+- [x] 步骤 4：README 只保留简化 JSON 示例。
+- [x] 步骤 5：运行本地和 Docker 测试，并执行 API 冒烟。
+- [x] 步骤 6：提交，提交信息为 `feat: require simplified mock chat json`。

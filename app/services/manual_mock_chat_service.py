@@ -38,15 +38,15 @@ def build_manual_mock_chat_values(payload: dict) -> dict:
 def _normalize_message(mock_chat_id: str, message: dict, index: int) -> dict:
     if not isinstance(message, dict):
         raise ValueError("message must be an object.")
-    sender_role = _required_text(message.get("sender_role") or message.get("role"), "sender_role")
+    sender_role = _required_text(message.get("role"), "role")
     if sender_role not in _ALLOWED_SENDER_ROLES:
-        raise ValueError("sender_role must be customer, staff, or system.")
+        raise ValueError("role must be customer, staff, or system.")
     return {
-        "message_id": _optional_text(message.get("message_id")) or f"{mock_chat_id}_msg_{index:03d}",
+        "message_id": f"{mock_chat_id}_msg_{index:03d}",
         "sender_role": sender_role,
-        "sender_name": _optional_text(message.get("sender_name") or message.get("sender")),
-        "message_time": _optional_text(message.get("message_time")),
-        "content": _required_text(message.get("content") or message.get("text"), "content"),
+        "sender_name": _optional_text(message.get("sender")),
+        "message_time": _optional_text(message.get("time")),
+        "content": _required_text(message.get("text"), "text"),
     }
 
 

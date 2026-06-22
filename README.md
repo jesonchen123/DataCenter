@@ -188,31 +188,29 @@ Invoke-RestMethod -Headers $headersManager `
   http://localhost:8000/api/v1/audit-logs
 ```
 
-Create a custom Mock chat for local testing:
+Create a custom Mock chat for local testing. The API only accepts the simplified message format; `message_id` is generated automatically, `role` is converted to `sender_role`, `text` is converted to `content`, and `sender` is converted to `sender_name`.
 
 ```powershell
 $headersUser = @{ 'x-username' = 'normal_user'; 'x-role' = 'normal_user' }
 
 $body = @{
-  mock_chat_id = 'custom_chat_001'
+  mock_chat_id = 'custom_chat_simple_001'
   source_platform = 'manual_test'
   business_line = '测试业务线'
   product_name = '测试产品'
   scenario_type = 'price_consulting'
   messages = @(
     @{
-      message_id = 'msg_001'
-      sender_role = 'customer'
-      sender_name = '客户A'
-      message_time = '2026-06-22T10:00:00+08:00'
-      content = '你们这个产品多少钱？有没有优惠？'
+      role = 'customer'
+      sender = '客户A'
+      time = '2026-06-22T10:00:00+08:00'
+      text = '你们这个产品多少钱？有没有优惠？'
     },
     @{
-      message_id = 'msg_002'
-      sender_role = 'staff'
-      sender_name = '销售A'
-      message_time = '2026-06-22T10:01:00+08:00'
-      content = '之前基础版报价是 9800 元，可以给你打八折。'
+      role = 'staff'
+      sender = '销售A'
+      time = '2026-06-22T10:01:00+08:00'
+      text = '之前基础版报价是 9800 元，可以给你打八折。'
     }
   )
 } | ConvertTo-Json -Depth 10
@@ -223,30 +221,7 @@ Invoke-RestMethod -Method Post -ContentType 'application/json' `
   http://localhost:8000/api/v1/mock-chats
 
 Invoke-RestMethod -Method Post -Headers $headersUser `
-  http://localhost:8000/api/v1/mock-chats/custom_chat_001/process
-```
-
-You can also use the simplified message format. In this form, `message_id` is generated automatically, `role` maps to `sender_role`, `text` maps to `content`, and `sender` maps to `sender_name`:
-
-```powershell
-$body = @{
-  mock_chat_id = 'custom_chat_simple_001'
-  messages = @(
-    @{
-      role = 'customer'
-      text = '你们这个产品多少钱？'
-    },
-    @{
-      role = 'staff'
-      text = '历史报价 9800 元，测试价格过滤。'
-    }
-  )
-} | ConvertTo-Json -Depth 10
-
-Invoke-RestMethod -Method Post -ContentType 'application/json' `
-  -Body $body `
-  -Headers $headersUser `
-  http://localhost:8000/api/v1/mock-chats
+  http://localhost:8000/api/v1/mock-chats/custom_chat_simple_001/process
 ```
 
 Check LLM call logs:
