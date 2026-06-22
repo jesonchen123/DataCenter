@@ -51,3 +51,7 @@ def _resolve_user_id(db, user_hint: str):
         return manager.id
 
     raise ValueError("No valid user found for process task trigger")
+
+
+def resolve_user_id(db, user_hint: str):
+    return _resolve_user_id(db, user_hint)

@@ -274,11 +274,11 @@
 
 ## 任务 14：知识文档审核 API 落库
 
-- [ ] 步骤 1：编写服务层失败测试。
-- [ ] 步骤 2：实现 review service。
-- [ ] 步骤 3：改造 knowledge docs 路由。
-- [ ] 步骤 4：运行测试和 Docker API 验证。
-- [ ] 步骤 5：提交，提交信息为 `feat: add database backed review APIs`。
+- [x] 步骤 1：编写服务层失败测试。
+- [x] 步骤 2：实现 review service。
+- [x] 步骤 3：改造 knowledge docs 路由。
+- [x] 步骤 4：运行测试和 Docker API 验证。
+- [x] 步骤 5：提交，提交信息为 `feat: add database backed review APIs`。
 
 ## 任务 15：导出与审计 API 落库
 
