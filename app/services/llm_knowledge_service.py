@@ -13,9 +13,24 @@ def generate_knowledge_doc_with_llm(
     related_id=None,
     client=None,
 ) -> dict:
-    llm_client = client or _build_default_client()
-    if llm_client is None:
+    if client is None and not is_llm_configured():
+        messages = build_knowledge_generation_messages(segment)
+        _write_llm_log(
+            db=db,
+            related_type=related_type,
+            related_id=related_id,
+            client=SimpleNamespace(settings=None),
+            prompt=_prompt_text(messages),
+            request_payload={"messages": messages},
+            response_payload=None,
+            parsed_output=None,
+            status="failed",
+            error_message="LLM API key is not configured.",
+            latency_ms=None,
+        )
         return generate_knowledge_doc(segment)
+
+    llm_client = client or OpenAICompatibleLLMClient()
 
     messages = build_knowledge_generation_messages(segment)
     result = None
@@ -57,12 +72,6 @@ def generate_knowledge_doc_with_llm(
             latency_ms=getattr(result, "latency_ms", None),
         )
         return generate_knowledge_doc(segment)
-
-
-def _build_default_client():
-    if not is_llm_configured():
-        return None
-    return OpenAICompatibleLLMClient()
 
 
 def _write_llm_log(

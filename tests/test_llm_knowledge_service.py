@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from app.core.config import Settings
 from app.services.llm_client_service import LLMChatResult, LLMClientError
@@ -97,6 +98,16 @@ class LLMKnowledgeServiceTest(unittest.TestCase):
         self.assertEqual(doc["doc_no"], "kb_seg_001")
         self.assertEqual(db.records[0].status, "failed")
         self.assertIn("original price", db.records[0].error_message)
+
+    def test_generate_knowledge_doc_with_llm_logs_failure_when_not_configured(self):
+        db = FakeDB()
+
+        with patch("app.services.llm_knowledge_service.is_llm_configured", return_value=False):
+            doc = generate_knowledge_doc_with_llm(_segment(), db=db)
+
+        self.assertEqual(doc["doc_no"], "kb_seg_001")
+        self.assertEqual(db.records[0].status, "failed")
+        self.assertIn("not configured", db.records[0].error_message)
 
 
 def _segment():

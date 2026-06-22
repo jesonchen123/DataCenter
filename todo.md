@@ -345,12 +345,12 @@
 
 ## 任务 21：Docker LLM 主流程验证
 
-- [ ] 步骤 1：运行 `docker compose run --rm backend python -m unittest discover -s tests`。
-- [ ] 步骤 2：运行 `docker compose run --rm backend python -m compileall app tests`。
-- [ ] 步骤 3：使用 Docker API 冒烟验证处理任务可调用 LLM 或安全回退。
-- [ ] 步骤 4：使用 PostgreSQL 查询验证 `llm_call_logs` 有成功或失败记录。
-- [ ] 步骤 5：更新 README 和 todo。
-- [ ] 步骤 6：提交，提交信息为 `docs: document llm semantic cleaning flow`。
+- [x] 步骤 1：运行 `docker compose run --rm backend python -m unittest discover -s tests`。
+- [x] 步骤 2：运行 `docker compose run --rm backend python -m compileall app tests`。
+- [x] 步骤 3：使用 Docker API 冒烟验证处理任务可调用 LLM 或安全回退。
+- [x] 步骤 4：使用 PostgreSQL 查询验证 `llm_call_logs` 有成功或失败记录。
+- [x] 步骤 5：更新 README 和 todo。
+- [x] 步骤 6：提交，提交信息为 `docs: document llm semantic cleaning flow`。
 
 ## 任务 22：最终安全回归
 

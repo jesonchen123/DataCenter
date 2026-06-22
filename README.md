@@ -93,6 +93,8 @@ LLM_MAX_TOKENS=2000
 LLM_TIMEOUT=60
 ```
 
+Docker Compose reads these LLM values from `.env` automatically and passes them to `backend` and `celery_worker`. If `.env` is absent or `LLM_API_KEY` is still `your_api_key`, processing safely falls back to deterministic knowledge generation and writes a failed `llm_call_logs` row.
+
 Build and run tests in Docker:
 
 ```bash
@@ -184,6 +186,13 @@ Invoke-RestMethod -Headers $headersManager `
 
 Invoke-RestMethod -Headers $headersManager `
   http://localhost:8000/api/v1/audit-logs
+```
+
+Check LLM call logs:
+
+```powershell
+docker compose exec -T postgres psql -U postgres -d chat_data_platform `
+  -c "select status, model_name, error_message, related_type, related_id from llm_call_logs order by created_at desc limit 5;"
 ```
 
 ## API Surface
