@@ -80,6 +80,19 @@ The Dockerfile uses the Tsinghua PyPI mirror by default to avoid slow downloads 
 docker compose build --build-arg PIP_INDEX_URL=https://pypi.org/simple
 ```
 
+Real LLM credentials must be stored in `.env` or deployment environment variables. Keep `.env.example` as placeholders only, because it is tracked by Git.
+
+For OpenAI-compatible providers, configure:
+
+```powershell
+LLM_API_BASE_URL=https://api.openai.com/v1
+LLM_API_KEY=your_real_key
+LLM_MODEL_NAME=gpt-4o-mini
+LLM_TEMPERATURE=0.2
+LLM_MAX_TOKENS=2000
+LLM_TIMEOUT=60
+```
+
 Build and run tests in Docker:
 
 ```bash

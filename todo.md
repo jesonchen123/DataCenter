@@ -306,13 +306,13 @@
 
 ## 任务 17：LLM 客户端与配置保护
 
-- [ ] 步骤 1：编写失败测试，验证未配置 Key 时 `is_llm_configured` 返回 `False`。
-- [ ] 步骤 2：编写失败测试，使用 fake HTTP 函数验证 Chat Completions 请求体、Authorization header 和响应解析。
-- [ ] 步骤 3：运行 `python -m unittest tests.test_llm_client_service`，确认失败。
-- [ ] 步骤 4：实现 LLM 客户端和配置判断。
-- [ ] 步骤 5：把 `.env.example` 中真实 Key 改回占位符，并在 README 写明真实 Key 放 `.env`。
-- [ ] 步骤 6：运行 `python -m unittest tests.test_llm_client_service` 和 `python -m unittest discover -s tests`。
-- [ ] 步骤 7：提交，提交信息为 `feat: add openai compatible llm client`。
+- [x] 步骤 1：编写失败测试，验证未配置 Key 时 `is_llm_configured` 返回 `False`。
+- [x] 步骤 2：编写失败测试，使用 fake HTTP 函数验证 Chat Completions 请求体、Authorization header 和响应解析。
+- [x] 步骤 3：运行 `python -m unittest tests.test_llm_client_service`，确认失败。
+- [x] 步骤 4：实现 LLM 客户端和配置判断。
+- [x] 步骤 5：把 `.env.example` 中真实 Key 改回占位符，并在 README 写明真实 Key 放 `.env`。
+- [x] 步骤 6：运行 `python -m unittest tests.test_llm_client_service` 和 `python -m unittest discover -s tests`。
+- [x] 步骤 7：提交，提交信息为 `feat: add openai compatible llm client`。
 
 ## 任务 18：安全 Prompt 与 LLM 输出校验
 
