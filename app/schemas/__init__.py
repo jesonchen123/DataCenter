@@ -28,6 +28,23 @@ class MockChatResponse(BaseModel):
     raw_content: dict = Field(default_factory=dict)
 
 
+class ManualMockChatMessageRequest(BaseModel):
+    message_id: str
+    sender_role: str
+    sender_name: str | None = None
+    message_time: str | None = None
+    content: str
+
+
+class ManualMockChatCreateRequest(BaseModel):
+    mock_chat_id: str
+    source_platform: str = "manual_test"
+    business_line: str | None = None
+    product_name: str | None = None
+    scenario_type: str | None = None
+    messages: list[ManualMockChatMessageRequest] = Field(default_factory=list)
+
+
 class ProcessTaskResponse(BaseModel):
     id: str
     task_no: str

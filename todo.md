@@ -359,3 +359,23 @@
 - [x] 步骤 3：运行一次价格咨询 Mock 聊天处理、审核、导出冒烟。
 - [x] 步骤 4：确认导出 JSON 中 `security.contains_original_price` 为 `false`。
 - [x] 步骤 5：提交，提交信息为 `test: verify llm cleaning safety regression`。
+
+---
+
+# 第四阶段：开发态自定义测试数据
+
+> 设计文档：`docs/superpowers/specs/2026-06-22-manual-mock-chat-create-design.md`
+>
+> 详细计划：`docs/superpowers/plans/2026-06-22-manual-mock-chat-create.md`
+
+## 任务 23：自定义 Mock 聊天记录创建接口
+
+- [x] 步骤 1：编写失败测试，验证手动聊天请求会被转换为 `mock_chats` 入库字段。
+- [x] 步骤 2：编写失败测试，验证空消息列表和非法 `sender_role` 会报错。
+- [x] 步骤 3：运行 `python -m unittest tests.test_manual_mock_chat_service`，确认失败。
+- [x] 步骤 4：实现 `manual_mock_chat_service`。
+- [x] 步骤 5：新增 Pydantic 请求 schema 和 `POST /api/v1/mock-chats` 路由。
+- [x] 步骤 6：运行 `python -m unittest tests.test_manual_mock_chat_service` 和 `python -m unittest discover -s tests`。
+- [x] 步骤 7：运行 Docker API 冒烟，验证创建、自定义记录查询、触发处理。
+- [x] 步骤 8：更新 README 和 todo。
+- [x] 步骤 9：提交，提交信息为 `feat: add manual mock chat creation API`。

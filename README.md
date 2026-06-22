@@ -188,6 +188,44 @@ Invoke-RestMethod -Headers $headersManager `
   http://localhost:8000/api/v1/audit-logs
 ```
 
+Create a custom Mock chat for local testing:
+
+```powershell
+$headersUser = @{ 'x-username' = 'normal_user'; 'x-role' = 'normal_user' }
+
+$body = @{
+  mock_chat_id = 'custom_chat_001'
+  source_platform = 'manual_test'
+  business_line = '测试业务线'
+  product_name = '测试产品'
+  scenario_type = 'price_consulting'
+  messages = @(
+    @{
+      message_id = 'msg_001'
+      sender_role = 'customer'
+      sender_name = '客户A'
+      message_time = '2026-06-22T10:00:00+08:00'
+      content = '你们这个产品多少钱？有没有优惠？'
+    },
+    @{
+      message_id = 'msg_002'
+      sender_role = 'staff'
+      sender_name = '销售A'
+      message_time = '2026-06-22T10:01:00+08:00'
+      content = '之前基础版报价是 9800 元，可以给你打八折。'
+    }
+  )
+} | ConvertTo-Json -Depth 10
+
+Invoke-RestMethod -Method Post -ContentType 'application/json' `
+  -Body $body `
+  -Headers $headersUser `
+  http://localhost:8000/api/v1/mock-chats
+
+Invoke-RestMethod -Method Post -Headers $headersUser `
+  http://localhost:8000/api/v1/mock-chats/custom_chat_001/process
+```
+
 Check LLM call logs:
 
 ```powershell
@@ -200,6 +238,7 @@ docker compose exec -T postgres psql -U postgres -d chat_data_platform `
 - `GET /health`
 - `POST /api/v1/auth/login`
 - `GET /api/v1/mock-chats`
+- `POST /api/v1/mock-chats`
 - `GET /api/v1/mock-chats/{mock_chat_id}`
 - `POST /api/v1/mock-chats/{mock_chat_id}/process`
 - `GET /api/v1/process-tasks/{process_task_id}`
