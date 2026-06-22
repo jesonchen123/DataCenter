@@ -11,6 +11,7 @@ if Celery is not None:
         "chat_data_platform",
         broker=settings.redis_url,
         backend=settings.redis_url,
+        include=["app.workers.tasks"],
     )
     celery_app.conf.update(task_track_started=True)
 else:

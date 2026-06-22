@@ -259,10 +259,10 @@
 
 ## 任务 12：Mock 数据 API 读写 PostgreSQL
 
-- [ ] 步骤 1：编写容器内 API 冒烟脚本，验证当前接口仍返回占位数据。
-- [ ] 步骤 2：改造路由使用 `get_db` 和任务服务。
-- [ ] 步骤 3：运行 Docker 容器内测试和接口冒烟检查。
-- [ ] 步骤 4：提交，提交信息为 `feat: drive mock chat APIs from database`。
+- [x] 步骤 1：编写容器内 API 冒烟脚本，验证当前接口仍返回占位数据。
+- [x] 步骤 2：改造路由使用 `get_db` 和任务服务。
+- [x] 步骤 3：运行 Docker 容器内测试和接口冒烟检查。
+- [x] 步骤 4：提交，提交信息为 `feat: drive mock chat APIs from database`。
 
 ## 任务 13：处理结果持久化
 

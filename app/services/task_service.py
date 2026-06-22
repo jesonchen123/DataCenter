@@ -23,7 +23,12 @@ def get_process_task_or_404(db, process_task_id: str):
     from fastapi import HTTPException
     from app.models.process_task import ProcessTask
 
-    task = db.query(ProcessTask).filter(ProcessTask.id == process_task_id).first()
+    try:
+        task_id = UUID(str(process_task_id))
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Process task not found")
+
+    task = db.query(ProcessTask).filter(ProcessTask.id == task_id).first()
     if task is None:
         raise HTTPException(status_code=404, detail="Process task not found")
     return task
