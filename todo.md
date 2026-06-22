@@ -326,13 +326,13 @@
 
 ## 任务 19：LLM 知识生成服务与调用日志
 
-- [ ] 步骤 1：编写失败测试，验证 LLM 成功时返回校验后的知识文档。
-- [ ] 步骤 2：编写失败测试，验证 LLM 调用成功会向 fake db 写入 `LLMCallLog(status="success")`。
-- [ ] 步骤 3：编写失败测试，验证 LLM 抛错或输出不安全时回退确定性 `generate_knowledge_doc`，并写入失败日志。
-- [ ] 步骤 4：运行 `python -m unittest tests.test_llm_knowledge_service`，确认失败。
-- [ ] 步骤 5：实现 LLM 知识生成服务和日志写入。
-- [ ] 步骤 6：运行 `python -m unittest tests.test_llm_knowledge_service` 和 `python -m unittest discover -s tests`。
-- [ ] 步骤 7：提交，提交信息为 `feat: add llm knowledge generation service`。
+- [x] 步骤 1：编写失败测试，验证 LLM 成功时返回校验后的知识文档。
+- [x] 步骤 2：编写失败测试，验证 LLM 调用成功会向 fake db 写入 `LLMCallLog(status="success")`。
+- [x] 步骤 3：编写失败测试，验证 LLM 抛错或输出不安全时回退确定性 `generate_knowledge_doc`，并写入失败日志。
+- [x] 步骤 4：运行 `python -m unittest tests.test_llm_knowledge_service`，确认失败。
+- [x] 步骤 5：实现 LLM 知识生成服务和日志写入。
+- [x] 步骤 6：运行 `python -m unittest tests.test_llm_knowledge_service` 和 `python -m unittest discover -s tests`。
+- [x] 步骤 7：提交，提交信息为 `feat: add llm knowledge generation service`。
 
 ## 任务 20：处理流水线接入 LLM
 
