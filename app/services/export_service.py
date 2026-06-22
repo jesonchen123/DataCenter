@@ -43,6 +43,15 @@ def build_export_content(docs: list[dict], created_by: str) -> dict:
     }
 
 
+def build_qa_export_content(export_content: dict | None) -> dict:
+    documents = []
+    for doc in (export_content or {}).get("documents", []):
+        content = str(doc.get("content") or "").strip()
+        if content:
+            documents.append({"content": content})
+    return {"documents": documents}
+
+
 def build_export_task_values(docs: list, created_by) -> dict:
     export_docs = [_doc_to_export_dict(doc) for doc in docs]
     export_content = build_export_content(export_docs, created_by=str(created_by))

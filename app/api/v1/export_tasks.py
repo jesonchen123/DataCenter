@@ -13,7 +13,7 @@ else:
     from app.models.export_task import ExportTask
     from app.models.knowledge_doc import KnowledgeDoc
     from app.services.audit_service import write_audit_log
-    from app.services.db_serializers import serialize_export_task
+    from app.services.db_serializers import serialize_export_task, serialize_export_task_content
     from app.services.export_service import create_export_task as create_export_task_record
     from app.services.task_service import resolve_user_id
 
@@ -72,4 +72,4 @@ else:
         task = db.query(ExportTask).filter(ExportTask.id == task_id).first()
         if task is None:
             raise HTTPException(status_code=404, detail="Export task not found")
-        return serialize_export_task(task)
+        return serialize_export_task_content(task)

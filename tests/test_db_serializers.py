@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from types import SimpleNamespace
 from uuid import UUID
 
-from app.services.db_serializers import serialize_mock_chat, serialize_process_task
+from app.services.db_serializers import serialize_export_task_content, serialize_mock_chat, serialize_process_task
 
 
 class DatabaseSerializersTest(unittest.TestCase):
@@ -51,6 +51,35 @@ class DatabaseSerializersTest(unittest.TestCase):
         self.assertEqual(result["progress"], 100)
         self.assertEqual(result["step_result"], {"status": "success"})
         self.assertEqual(result["completed_at"], "2026-01-01T10:02:00+00:00")
+
+    def test_serialize_export_task_content_returns_only_qa_documents(self):
+        task = SimpleNamespace(
+            export_content={
+                "export_id": "export_001",
+                "documents": [
+                    {
+                        "doc_id": "kb_001",
+                        "title": "产品使用流程",
+                        "content": "客户问：产品怎么使用？\n销售答：先登录后台再创建知识库。",
+                        "metadata": {"risk_level": "low"},
+                        "security": {"price_filtered": True},
+                    }
+                ],
+            }
+        )
+
+        result = serialize_export_task_content(task)
+
+        self.assertEqual(
+            result,
+            {
+                "documents": [
+                    {
+                        "content": "客户问：产品怎么使用？\n销售答：先登录后台再创建知识库。",
+                    }
+                ]
+            },
+        )
 
 
 if __name__ == "__main__":

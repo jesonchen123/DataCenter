@@ -103,6 +103,12 @@ def serialize_export_task(task) -> dict:
     }
 
 
+def serialize_export_task_content(task) -> dict:
+    from app.services.export_service import build_qa_export_content
+
+    return build_qa_export_content(task.export_content)
+
+
 def serialize_audit_log(log) -> dict:
     return {
         "id": _to_json(log.id),

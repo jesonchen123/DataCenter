@@ -188,6 +188,18 @@ Invoke-RestMethod -Headers $headersManager `
   http://localhost:8000/api/v1/audit-logs
 ```
 
+`GET /api/v1/export-tasks/{export_task_id}/content` returns only QA document content:
+
+```json
+{
+  "documents": [
+    {
+      "content": "客户问：产品怎么使用？\n销售答：先登录后台再创建知识库。"
+    }
+  ]
+}
+```
+
 Create a custom Mock chat for local testing. The API only accepts the simplified message format: `role`, `sender`, and `text`. `message_id` is generated automatically, `role` is converted to `sender_role`, `text` is converted to `content`, and `sender` is converted to `sender_name`. Time fields such as `time` and `message_time` are rejected so they cannot enter raw or cleaned knowledge data.
 
 Cleaned segments and generated knowledge content use the QA format `客户问：...` and `销售答：...`; sender names, timestamps, message ids, and raw chat metadata are not included in final knowledge content.

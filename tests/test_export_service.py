@@ -1,7 +1,7 @@
 import unittest
 
 from app.domain.enums import ReviewStatus, RiskLevel, Role
-from app.services.export_service import build_export_content, validate_exportable
+from app.services.export_service import build_export_content, build_qa_export_content, validate_exportable
 
 
 def approved_doc(**overrides):
@@ -60,6 +60,29 @@ class ExportServiceTest(unittest.TestCase):
         self.assertEqual(content["export_type"], "rag_knowledge_base")
         self.assertTrue(exported_doc["security"]["price_filtered"])
         self.assertFalse(exported_doc["security"]["contains_original_price"])
+
+    def test_build_qa_export_content_returns_only_document_content(self):
+        export_content = build_export_content(
+            [
+                approved_doc(
+                    content="客户问：产品怎么使用？\n销售答：先登录后台再创建知识库。",
+                )
+            ],
+            created_by="manager",
+        )
+
+        result = build_qa_export_content(export_content)
+
+        self.assertEqual(
+            result,
+            {
+                "documents": [
+                    {
+                        "content": "客户问：产品怎么使用？\n销售答：先登录后台再创建知识库。",
+                    }
+                ]
+            },
+        )
 
 
 if __name__ == "__main__":

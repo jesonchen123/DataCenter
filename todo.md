@@ -408,3 +408,12 @@
 - [x] 步骤 6：更新 README，说明唯一输入格式和问答化输出规则。
 - [x] 步骤 7：运行本地和 Docker 测试，并执行 API 冒烟。
 - [x] 步骤 8：提交，提交信息为 `feat: enforce qa-only cleaned chat data`。
+
+## 任务 27：导出内容接口只返回纯问答 content
+
+- [x] 步骤 1：编写失败测试，验证纯问答导出只包含 `documents[].content`。
+- [x] 步骤 2：实现 `build_qa_export_content`，从完整导出包中提取 content。
+- [x] 步骤 3：实现 `serialize_export_task_content` 并接入 `/api/v1/export-tasks/{export_task_id}/content`。
+- [x] 步骤 4：更新 README，说明 `/content` 的纯问答返回格式。
+- [x] 步骤 5：运行本地和 Docker 测试，并执行 API 冒烟。
+- [x] 步骤 6：提交，提交信息为 `feat: export qa content only`。
