@@ -108,6 +108,71 @@ Health check:
 curl http://localhost:8000/health
 ```
 
+## Docker 数据库驱动主流程
+
+完整启动后，PostgreSQL 和 Redis 都运行在 Docker 容器中，业务数据写入 `postgres_data` volume。PostgreSQL 已映射到宿主机 `5432`，可以用本地数据库客户端连接。
+
+启动和初始化：
+
+```powershell
+docker compose build
+docker compose up -d postgres redis
+docker compose run --rm backend alembic upgrade head
+docker compose run --rm backend python -m app.db.init_db
+docker compose up -d backend celery_worker
+```
+
+容器内验证：
+
+```powershell
+docker compose run --rm backend python -m unittest discover -s tests
+docker compose run --rm backend python -m compileall app tests
+```
+
+API 主流程冒烟验证示例：
+
+```powershell
+$headersUser = @{ 'x-username' = 'normal_user'; 'x-role' = 'normal_user' }
+$headersManager = @{ 'x-username' = 'manager'; 'x-role' = 'manager' }
+
+$process = Invoke-RestMethod -Method Post -Headers $headersUser `
+  http://localhost:8000/api/v1/mock-chats/mock_chat_001/process
+
+do {
+  Start-Sleep -Seconds 1
+  $task = Invoke-RestMethod -Headers $headersUser `
+    "http://localhost:8000/api/v1/process-tasks/$($process.id)"
+} while ($task.status -eq 'pending' -or $task.status -eq 'processing')
+
+$docsRaw = Invoke-RestMethod -Headers $headersManager `
+  http://localhost:8000/api/v1/knowledge-docs
+$docs = @()
+foreach ($item in $docsRaw) { $docs += $item }
+
+$doc = $docs | Sort-Object { [DateTime]$_.created_at } -Descending | Select-Object -First 1
+if ($doc.review_status -ne 'pending_review') {
+  $doc = Invoke-RestMethod -Method Post -Headers $headersUser `
+    "http://localhost:8000/api/v1/knowledge-docs/$($doc.id)/submit-review"
+}
+
+$doc = Invoke-RestMethod -Method Post -ContentType 'application/json' `
+  -Body '{"approved":true,"review_comment":"smoke"}' `
+  -Headers $headersManager `
+  "http://localhost:8000/api/v1/knowledge-docs/$($doc.id)/review"
+
+$body = @{ knowledge_doc_ids = @($doc.id) } | ConvertTo-Json
+$export = Invoke-RestMethod -Method Post -ContentType 'application/json' `
+  -Body $body `
+  -Headers $headersManager `
+  http://localhost:8000/api/v1/export-tasks
+
+Invoke-RestMethod -Headers $headersManager `
+  "http://localhost:8000/api/v1/export-tasks/$($export.id)/content"
+
+Invoke-RestMethod -Headers $headersManager `
+  http://localhost:8000/api/v1/audit-logs
+```
+
 ## API Surface
 
 - `GET /health`

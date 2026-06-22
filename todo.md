@@ -290,8 +290,8 @@
 
 ## 任务 16：最终 Docker 主流程验证与文档
 
-- [ ] 步骤 1：运行 `docker compose run --rm backend python -m unittest discover -s tests`。
-- [ ] 步骤 2：运行 `docker compose run --rm backend python -m compileall app tests`。
-- [ ] 步骤 3：运行数据库迁移、初始化、处理任务、审核和导出冒烟验证。
-- [ ] 步骤 4：更新 README 和 todo。
-- [ ] 步骤 5：提交，提交信息为 `docs: document database driven API flow`。
+- [x] 步骤 1：运行 `docker compose run --rm backend python -m unittest discover -s tests`。
+- [x] 步骤 2：运行 `docker compose run --rm backend python -m compileall app tests`。
+- [x] 步骤 3：运行数据库迁移、初始化、处理任务、审核和导出冒烟验证。
+- [x] 步骤 4：更新 README 和 todo。
+- [x] 步骤 5：提交，提交信息为 `docs: document database driven API flow`。
