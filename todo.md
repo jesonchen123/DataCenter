@@ -1,242 +1,242 @@
-# Data Platform Backend MVP Implementation Plan
+# 数据中台后端 MVP 实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **给 agent 工作者的说明：** 必须使用 `superpowers:executing-plans` 按任务逐项实施本计划。步骤使用复选框（`- [ ]`）语法跟踪进度。
 
-**Goal:** Build the FastAPI backend skeleton and core Mock-data processing flow for the first data middle platform MVP.
+**目标：** 构建数据中台第一版 MVP 的 FastAPI 后端骨架和核心 Mock 数据处理流程。
 
-**Architecture:** FastAPI exposes auth, Mock chat, processing, knowledge review, export, and audit APIs. PostgreSQL is the only business data store; Redis is only for Celery. Core processing logic is implemented as pure services so it can be tested before third-party dependencies are installed.
+**架构：** FastAPI 对外提供认证、Mock 聊天、处理任务、知识审核、导出和审计 API。PostgreSQL 是唯一业务数据存储；Redis 只用于 Celery。核心处理逻辑实现为纯服务，便于在安装第三方依赖前先进行测试。
 
-**Tech Stack:** Python 3.12 target, FastAPI, Pydantic, SQLAlchemy, Alembic, PostgreSQL, Celery, Redis, python-jose, passlib/bcrypt, pytest, unittest for dependency-free core service tests.
+**技术栈：** Python 3.12 目标版本、FastAPI、Pydantic、SQLAlchemy、Alembic、PostgreSQL、Celery、Redis、python-jose、passlib/bcrypt、pytest，以及用于无依赖核心服务测试的 unittest。
 
-## Global Constraints
+## 全局约束
 
-- First version has only two roles: `manager` and `normal_user`.
-- First version does not integrate real WeChat or QQ data.
-- First version uses built-in Mock data to drive the complete flow.
-- All long-term business data is stored in PostgreSQL.
-- Redis is only used for Celery queueing and task status cache.
-- Exported JSON is stored in `export_tasks.export_content`, not local files.
-- Price filtering must happen before knowledge document generation.
-- Export JSON must be revalidated before storage.
-- Normal users cannot export data.
-- Only managers can approve and export data.
-- Any knowledge document containing original prices cannot be exported.
-- Frontend is out of scope for this plan.
+- 第一版只包含两个角色：`manager` 和 `normal_user`。
+- 第一版不接入真实微信或 QQ 数据。
+- 第一版使用内置 Mock 数据驱动完整流程。
+- 所有长期业务数据都存储在 PostgreSQL。
+- Redis 只用于 Celery 队列和任务状态缓存。
+- 导出的 JSON 存储在 `export_tasks.export_content`，不写入本地文件。
+- 价格过滤必须发生在知识文档生成之前。
+- 导出 JSON 入库前必须再次校验。
+- 普通用户不能导出数据。
+- 只有管理层可以审核和导出数据。
+- 任何包含原始价格的知识文档都不能导出。
+- 前端不在本计划范围内。
 
 ---
 
-## Task 1: Project Skeleton And Dependency Contract
+## 任务 1：项目骨架与依赖契约
 
-**Files:**
-- Create: `README.md`
-- Create: `.env.example`
-- Create: `.gitignore`
-- Create: `requirements.txt`
-- Create: `docker-compose.yml`
-- Create: `Dockerfile`
-- Create: `app/__init__.py`
-- Create: `app/main.py`
-- Create: `app/api/__init__.py`
-- Create: `app/api/v1/__init__.py`
-- Create: `app/core/__init__.py`
-- Create: `app/core/config.py`
-- Create: `tests/__init__.py`
+**文件：**
+- 创建：`README.md`
+- 创建：`.env.example`
+- 创建：`.gitignore`
+- 创建：`requirements.txt`
+- 创建：`docker-compose.yml`
+- 创建：`Dockerfile`
+- 创建：`app/__init__.py`
+- 创建：`app/main.py`
+- 创建：`app/api/__init__.py`
+- 创建：`app/api/v1/__init__.py`
+- 创建：`app/core/__init__.py`
+- 创建：`app/core/config.py`
+- 创建：`tests/__init__.py`
 
-**Interfaces:**
-- Produces: `app.main:create_app() -> FastAPI`
-- Produces: `app.core.config.Settings`
+**接口：**
+- 产出：`app.main:create_app() -> FastAPI`
+- 产出：`app.core.config.Settings`
 
-- [x] Step 1: Create dependency and environment files.
-- [x] Step 2: Create app package skeleton.
-- [x] Step 3: Create FastAPI app factory with health endpoint.
-- [x] Step 4: Run `python -m unittest discover -s tests`.
-- [x] Step 5: Commit with `chore: scaffold backend project`.
+- [x] 步骤 1：创建依赖和环境文件。
+- [x] 步骤 2：创建应用包骨架。
+- [x] 步骤 3：创建带健康检查接口的 FastAPI app 工厂。
+- [x] 步骤 4：运行 `python -m unittest discover -s tests`。
+- [x] 步骤 5：提交，提交信息为 `chore: scaffold backend project`。
 
-## Task 2: Core Domain Types And Permission Rules
+## 任务 2：核心领域类型与权限规则
 
-**Files:**
-- Create: `app/domain/__init__.py`
-- Create: `app/domain/enums.py`
-- Create: `app/core/permissions.py`
-- Create: `tests/test_permissions.py`
+**文件：**
+- 创建：`app/domain/__init__.py`
+- 创建：`app/domain/enums.py`
+- 创建：`app/core/permissions.py`
+- 创建：`tests/test_permissions.py`
 
-**Interfaces:**
-- Produces: `Role`, `ReviewStatus`, `RiskLevel`, `PriceFilterStatus`
-- Produces: `can_export(role: str) -> bool`
-- Produces: `can_approve(role: str) -> bool`
-- Produces: `can_view_audit_logs(role: str) -> bool`
+**接口：**
+- 产出：`Role`、`ReviewStatus`、`RiskLevel`、`PriceFilterStatus`
+- 产出：`can_export(role: str) -> bool`
+- 产出：`can_approve(role: str) -> bool`
+- 产出：`can_view_audit_logs(role: str) -> bool`
 
-- [x] Step 1: Write failing permission tests for `manager` and `normal_user`.
-- [x] Step 2: Run `python -m unittest tests.test_permissions`.
-- [x] Step 3: Implement enums and permission helpers.
-- [x] Step 4: Run `python -m unittest tests.test_permissions`.
-- [x] Step 5: Commit with `feat: add role permission rules`.
+- [x] 步骤 1：为 `manager` 和 `normal_user` 编写失败的权限测试。
+- [x] 步骤 2：运行 `python -m unittest tests.test_permissions`。
+- [x] 步骤 3：实现枚举和权限辅助函数。
+- [x] 步骤 4：运行 `python -m unittest tests.test_permissions`。
+- [x] 步骤 5：提交，提交信息为 `feat: add role permission rules`。
 
-## Task 3: Price Filtering Service
+## 任务 3：价格过滤服务
 
-**Files:**
-- Create: `app/services/__init__.py`
-- Create: `app/services/price_filter_service.py`
-- Create: `tests/test_price_filter_service.py`
+**文件：**
+- 创建：`app/services/__init__.py`
+- 创建：`app/services/price_filter_service.py`
+- 创建：`tests/test_price_filter_service.py`
 
-**Interfaces:**
-- Produces: `PriceFilterResult`
-- Produces: `detect_price_info(text: str) -> PriceFilterResult`
-- Produces: `filter_price_content(text: str) -> PriceFilterResult`
-- Produces: `contains_original_price(text: str) -> bool`
+**接口：**
+- 产出：`PriceFilterResult`
+- 产出：`detect_price_info(text: str) -> PriceFilterResult`
+- 产出：`filter_price_content(text: str) -> PriceFilterResult`
+- 产出：`contains_original_price(text: str) -> bool`
 
-- [x] Step 1: Write failing tests for amount, discount, preferential price, contract amount, payment term, rebate, commission, and customer price intent.
-- [x] Step 2: Run `python -m unittest tests.test_price_filter_service`.
-- [x] Step 3: Implement regex-based price detection and sentence filtering.
-- [x] Step 4: Run `python -m unittest tests.test_price_filter_service`.
-- [x] Step 5: Commit with `feat: add price filtering service`.
+- [x] 步骤 1：为金额、折扣、优惠价、合同金额、账期、返点、佣金和客户询价意图编写失败测试。
+- [x] 步骤 2：运行 `python -m unittest tests.test_price_filter_service`。
+- [x] 步骤 3：实现基于正则的价格识别和句子过滤。
+- [x] 步骤 4：运行 `python -m unittest tests.test_price_filter_service`。
+- [x] 步骤 5：提交，提交信息为 `feat: add price filtering service`。
 
-## Task 4: Cleaning And Desensitization Services
+## 任务 4：清洗与脱敏服务
 
-**Files:**
-- Create: `app/services/cleaning_service.py`
-- Create: `app/services/desensitization_service.py`
-- Create: `tests/test_cleaning_service.py`
-- Create: `tests/test_desensitization_service.py`
+**文件：**
+- 创建：`app/services/cleaning_service.py`
+- 创建：`app/services/desensitization_service.py`
+- 创建：`tests/test_cleaning_service.py`
+- 创建：`tests/test_desensitization_service.py`
 
-**Interfaces:**
-- Produces: `clean_messages(messages: list[dict]) -> list[dict]`
-- Produces: `normalize_text(text: str) -> str`
-- Produces: `desensitize_text(text: str) -> tuple[str, bool]`
+**接口：**
+- 产出：`clean_messages(messages: list[dict]) -> list[dict]`
+- 产出：`normalize_text(text: str) -> str`
+- 产出：`desensitize_text(text: str) -> tuple[str, bool]`
 
-- [x] Step 1: Write failing cleaning tests for empty messages, duplicates, system prompts, simple greetings, and punctuation normalization.
-- [x] Step 2: Write failing desensitization tests for phone, email, QQ, WeChat ID, order number, and ID card.
-- [x] Step 3: Run `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`.
-- [x] Step 4: Implement cleaning and desensitization services.
-- [x] Step 5: Run `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`.
-- [x] Step 6: Commit with `feat: add cleaning and desensitization services`.
+- [x] 步骤 1：为空消息、重复消息、系统提示、简单寒暄和标点归一化编写失败的清洗测试。
+- [x] 步骤 2：为手机号、邮箱、QQ、微信号、订单号和身份证号编写失败的脱敏测试。
+- [x] 步骤 3：运行 `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`。
+- [x] 步骤 4：实现清洗和脱敏服务。
+- [x] 步骤 5：运行 `python -m unittest tests.test_cleaning_service tests.test_desensitization_service`。
+- [x] 步骤 6：提交，提交信息为 `feat: add cleaning and desensitization services`。
 
-## Task 5: Deterministic Knowledge Generation And Export Validation
+## 任务 5：确定性知识生成与导出校验
 
-**Files:**
-- Create: `app/services/knowledge_service.py`
-- Create: `app/services/export_service.py`
-- Create: `tests/test_knowledge_service.py`
-- Create: `tests/test_export_service.py`
+**文件：**
+- 创建：`app/services/knowledge_service.py`
+- 创建：`app/services/export_service.py`
+- 创建：`tests/test_knowledge_service.py`
+- 创建：`tests/test_export_service.py`
 
-**Interfaces:**
-- Produces: `generate_knowledge_doc(segment: dict) -> dict`
-- Produces: `validate_exportable(doc: dict, requester_role: str) -> None`
-- Produces: `build_export_content(docs: list[dict], created_by: str) -> dict`
+**接口：**
+- 产出：`generate_knowledge_doc(segment: dict) -> dict`
+- 产出：`validate_exportable(doc: dict, requester_role: str) -> None`
+- 产出：`build_export_content(docs: list[dict], created_by: str) -> dict`
 
-- [x] Step 1: Write failing tests for price-intent knowledge docs and non-price business docs.
-- [x] Step 2: Write failing export validation tests for role, review status, desensitization, price filtering, original price, and high-risk approval.
-- [x] Step 3: Run `python -m unittest tests.test_knowledge_service tests.test_export_service`.
-- [x] Step 4: Implement deterministic knowledge generation and export validation.
-- [x] Step 5: Run `python -m unittest tests.test_knowledge_service tests.test_export_service`.
-- [x] Step 6: Commit with `feat: add knowledge generation and export validation`.
+- [x] 步骤 1：为价格咨询意图知识文档和非价格业务文档编写失败测试。
+- [x] 步骤 2：为角色、审核状态、脱敏、价格过滤、原始价格和高风险审批编写失败的导出校验测试。
+- [x] 步骤 3：运行 `python -m unittest tests.test_knowledge_service tests.test_export_service`。
+- [x] 步骤 4：实现确定性知识生成和导出校验。
+- [x] 步骤 5：运行 `python -m unittest tests.test_knowledge_service tests.test_export_service`。
+- [x] 步骤 6：提交，提交信息为 `feat: add knowledge generation and export validation`。
 
-## Task 6: SQLAlchemy Models And Alembic Migration
+## 任务 6：SQLAlchemy 模型与 Alembic 迁移
 
-**Files:**
-- Create: `app/db/__init__.py`
-- Create: `app/db/base.py`
-- Create: `app/db/session.py`
-- Create: `app/models/__init__.py`
-- Create: `app/models/user.py`
-- Create: `app/models/mock_chat.py`
-- Create: `app/models/process_task.py`
-- Create: `app/models/dialogue_segment.py`
-- Create: `app/models/knowledge_doc.py`
-- Create: `app/models/export_task.py`
-- Create: `app/models/audit_log.py`
-- Create: `app/models/llm_call_log.py`
-- Create: `alembic.ini`
-- Create: `alembic/env.py`
-- Create: `alembic/versions/20260621_0001_init_tables.py`
+**文件：**
+- 创建：`app/db/__init__.py`
+- 创建：`app/db/base.py`
+- 创建：`app/db/session.py`
+- 创建：`app/models/__init__.py`
+- 创建：`app/models/user.py`
+- 创建：`app/models/mock_chat.py`
+- 创建：`app/models/process_task.py`
+- 创建：`app/models/dialogue_segment.py`
+- 创建：`app/models/knowledge_doc.py`
+- 创建：`app/models/export_task.py`
+- 创建：`app/models/audit_log.py`
+- 创建：`app/models/llm_call_log.py`
+- 创建：`alembic.ini`
+- 创建：`alembic/env.py`
+- 创建：`alembic/versions/20260621_0001_init_tables.py`
 
-**Interfaces:**
-- Produces PostgreSQL tables from the technical design document.
+**接口：**
+- 按技术实现文档产出 PostgreSQL 数据表。
 
-- [x] Step 1: Create SQLAlchemy model files matching the documented PostgreSQL schema.
-- [x] Step 2: Create Alembic configuration and initial migration with `pgcrypto`, tables, foreign keys, and indexes.
-- [x] Step 3: Run import smoke check once dependencies are installed: `python -c "from app.models import User, MockChat, ProcessTask, DialogueSegment, KnowledgeDoc, ExportTask, AuditLog, LLMCallLog"` (deferred until dependencies are installed).
-- [x] Step 4: Commit with `feat: add database models and migration`.
+- [x] 步骤 1：创建与文档中 PostgreSQL schema 匹配的 SQLAlchemy 模型文件。
+- [x] 步骤 2：创建 Alembic 配置和初始迁移，包含 `pgcrypto`、数据表、外键和索引。
+- [x] 步骤 3：依赖安装后运行导入冒烟检查：`python -c "from app.models import User, MockChat, ProcessTask, DialogueSegment, KnowledgeDoc, ExportTask, AuditLog, LLMCallLog"`（已延后到依赖安装后执行）。
+- [x] 步骤 4：提交，提交信息为 `feat: add database models and migration`。
 
-## Task 7: Mock Data Seeding
+## 任务 7：Mock 数据初始化
 
-**Files:**
-- Create: `app/db/init_db.py`
-- Create: `app/services/mock_data_service.py`
-- Create: `tests/test_mock_data_service.py`
+**文件：**
+- 创建：`app/db/init_db.py`
+- 创建：`app/services/mock_data_service.py`
+- 创建：`tests/test_mock_data_service.py`
 
-**Interfaces:**
-- Produces: `build_mock_chats() -> list[dict]`
-- Produces: `python -m app.db.init_db`
+**接口：**
+- 产出：`build_mock_chats() -> list[dict]`
+- 产出：`python -m app.db.init_db`
 
-- [x] Step 1: Write failing tests that at least 20 Mock chats are generated and cover product consulting, after-sales, price consulting, and customer objections.
-- [x] Step 2: Run `python -m unittest tests.test_mock_data_service`.
-- [x] Step 3: Implement deterministic Mock data builder and database seeding command.
-- [x] Step 4: Run `python -m unittest tests.test_mock_data_service`.
-- [x] Step 5: Commit with `feat: add mock data seed builder`.
+- [x] 步骤 1：编写失败测试，验证至少生成 20 条 Mock 聊天，并覆盖产品咨询、售后问题、价格咨询和客户异议。
+- [x] 步骤 2：运行 `python -m unittest tests.test_mock_data_service`。
+- [x] 步骤 3：实现确定性的 Mock 数据构造器和数据库初始化命令。
+- [x] 步骤 4：运行 `python -m unittest tests.test_mock_data_service`。
+- [x] 步骤 5：提交，提交信息为 `feat: add mock data seed builder`。
 
-## Task 8: Processing Pipeline And Celery Task
+## 任务 8：处理流水线与 Celery 任务
 
-**Files:**
-- Create: `app/services/processing_pipeline.py`
-- Create: `app/workers/__init__.py`
-- Create: `app/workers/celery_app.py`
-- Create: `app/workers/tasks.py`
-- Create: `tests/test_processing_pipeline.py`
+**文件：**
+- 创建：`app/services/processing_pipeline.py`
+- 创建：`app/workers/__init__.py`
+- 创建：`app/workers/celery_app.py`
+- 创建：`app/workers/tasks.py`
+- 创建：`tests/test_processing_pipeline.py`
 
-**Interfaces:**
-- Produces: `process_mock_chat_payload(payload: dict) -> dict`
-- Produces: Celery task `process_mock_chat_task(process_task_id: str) -> dict`
+**接口：**
+- 产出：`process_mock_chat_payload(payload: dict) -> dict`
+- 产出：Celery 任务 `process_mock_chat_task(process_task_id: str) -> dict`
 
-- [x] Step 1: Write failing pipeline tests for parse, clean, desensitize, price filter, segment, and knowledge output.
-- [x] Step 2: Run `python -m unittest tests.test_processing_pipeline`.
-- [x] Step 3: Implement dependency-free payload pipeline.
-- [x] Step 4: Add Celery app and task wrapper for database-backed execution.
-- [x] Step 5: Run `python -m unittest tests.test_processing_pipeline`.
-- [x] Step 6: Commit with `feat: add mock chat processing pipeline`.
+- [x] 步骤 1：为解析、清洗、脱敏、价格过滤、分段和知识输出编写失败的流水线测试。
+- [x] 步骤 2：运行 `python -m unittest tests.test_processing_pipeline`。
+- [x] 步骤 3：实现无第三方依赖的 payload 处理流水线。
+- [x] 步骤 4：添加 Celery app 和面向数据库执行的任务包装。
+- [x] 步骤 5：运行 `python -m unittest tests.test_processing_pipeline`。
+- [x] 步骤 6：提交，提交信息为 `feat: add mock chat processing pipeline`。
 
-## Task 9: API Schemas And Routers
+## 任务 9：API Schema 与路由
 
-**Files:**
-- Create: `app/schemas/__init__.py`
-- Create: `app/api/v1/auth.py`
-- Create: `app/api/v1/mock_chats.py`
-- Create: `app/api/v1/process_tasks.py`
-- Create: `app/api/v1/knowledge_docs.py`
-- Create: `app/api/v1/export_tasks.py`
-- Create: `app/api/v1/audit_logs.py`
-- Modify: `app/main.py`
+**文件：**
+- 创建：`app/schemas/__init__.py`
+- 创建：`app/api/v1/auth.py`
+- 创建：`app/api/v1/mock_chats.py`
+- 创建：`app/api/v1/process_tasks.py`
+- 创建：`app/api/v1/knowledge_docs.py`
+- 创建：`app/api/v1/export_tasks.py`
+- 创建：`app/api/v1/audit_logs.py`
+- 修改：`app/main.py`
 
-**Interfaces:**
-- Produces: `/api/v1/auth/login`
-- Produces: `/api/v1/mock-chats`
-- Produces: `/api/v1/mock-chats/{id}`
-- Produces: `/api/v1/mock-chats/{id}/process`
-- Produces: `/api/v1/process-tasks/{id}`
-- Produces: `/api/v1/knowledge-docs`
-- Produces: `/api/v1/knowledge-docs/{id}/submit-review`
-- Produces: `/api/v1/knowledge-docs/{id}/review`
-- Produces: `/api/v1/export-tasks`
-- Produces: `/api/v1/export-tasks/{id}/content`
-- Produces: `/api/v1/audit-logs`
+**接口：**
+- 产出：`/api/v1/auth/login`
+- 产出：`/api/v1/mock-chats`
+- 产出：`/api/v1/mock-chats/{id}`
+- 产出：`/api/v1/mock-chats/{id}/process`
+- 产出：`/api/v1/process-tasks/{id}`
+- 产出：`/api/v1/knowledge-docs`
+- 产出：`/api/v1/knowledge-docs/{id}/submit-review`
+- 产出：`/api/v1/knowledge-docs/{id}/review`
+- 产出：`/api/v1/export-tasks`
+- 产出：`/api/v1/export-tasks/{id}/content`
+- 产出：`/api/v1/audit-logs`
 
-- [x] Step 1: Add Pydantic schemas for request and response objects.
-- [x] Step 2: Add routers with dependency placeholders for database sessions and current user.
-- [x] Step 3: Enforce role checks in router entry points.
-- [x] Step 4: Run import smoke check once dependencies are installed (deferred until dependencies are installed).
-- [x] Step 5: Commit with `feat: add backend API routers`.
+- [x] 步骤 1：添加请求和响应对象的 Pydantic schema。
+- [x] 步骤 2：添加路由，并为数据库 session 和当前用户保留依赖占位。
+- [x] 步骤 3：在路由入口执行角色检查。
+- [x] 步骤 4：依赖安装后运行导入冒烟检查（已延后到依赖安装后执行）。
+- [x] 步骤 5：提交，提交信息为 `feat: add backend API routers`。
 
-## Task 10: Final Verification And Documentation
+## 任务 10：最终验证与文档
 
-**Files:**
-- Modify: `README.md`
-- Modify: `todo.md`
+**文件：**
+- 修改：`README.md`
+- 修改：`todo.md`
 
-**Interfaces:**
-- Produces documented local commands for tests, Docker, migrations, seed data, API, worker, and export.
+**接口：**
+- 产出本地测试、Docker、迁移、种子数据、API、worker 和导出的运行命令文档。
 
-- [x] Step 1: Run `python -m unittest discover -s tests`.
-- [x] Step 2: Update README with local and Docker usage.
-- [x] Step 3: Mark all completed `todo.md` tasks.
-- [x] Step 4: Run `git status --short`.
-- [x] Step 5: Commit with `docs: document backend mvp usage`.
+- [x] 步骤 1：运行 `python -m unittest discover -s tests`。
+- [x] 步骤 2：更新 README，补充本地和 Docker 用法。
+- [x] 步骤 3：标记 `todo.md` 中所有已完成任务。
+- [x] 步骤 4：运行 `git status --short`。
+- [x] 步骤 5：提交，提交信息为 `docs: document backend mvp usage`。
