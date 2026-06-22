@@ -354,8 +354,8 @@
 
 ## 任务 22：最终安全回归
 
-- [ ] 步骤 1：运行 `python -m unittest discover -s tests`。
-- [ ] 步骤 2：运行 `docker compose run --rm backend python -m unittest discover -s tests`。
-- [ ] 步骤 3：运行一次价格咨询 Mock 聊天处理、审核、导出冒烟。
-- [ ] 步骤 4：确认导出 JSON 中 `security.contains_original_price` 为 `false`。
-- [ ] 步骤 5：提交，提交信息为 `test: verify llm cleaning safety regression`。
+- [x] 步骤 1：运行 `python -m unittest discover -s tests`。
+- [x] 步骤 2：运行 `docker compose run --rm backend python -m unittest discover -s tests`。
+- [x] 步骤 3：运行一次价格咨询 Mock 聊天处理、审核、导出冒烟。
+- [x] 步骤 4：确认导出 JSON 中 `security.contains_original_price` 为 `false`。
+- [x] 步骤 5：提交，提交信息为 `test: verify llm cleaning safety regression`。
