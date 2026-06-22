@@ -251,11 +251,11 @@
 
 ## 任务 11：数据库序列化与任务服务
 
-- [ ] 步骤 1：先写序列化失败测试。
-- [ ] 步骤 2：运行 `python -m unittest tests.test_db_serializers`，确认失败。
-- [ ] 步骤 3：实现序列化和任务服务。
-- [ ] 步骤 4：运行 `python -m unittest tests.test_db_serializers`，确认通过。
-- [ ] 步骤 5：提交，提交信息为 `feat: add database task services`。
+- [x] 步骤 1：先写序列化失败测试。
+- [x] 步骤 2：运行 `python -m unittest tests.test_db_serializers`，确认失败。
+- [x] 步骤 3：实现序列化和任务服务。
+- [x] 步骤 4：运行 `python -m unittest tests.test_db_serializers`，确认通过。
+- [x] 步骤 5：提交，提交信息为 `feat: add database task services`。
 
 ## 任务 12：Mock 数据 API 读写 PostgreSQL
 
