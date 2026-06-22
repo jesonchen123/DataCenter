@@ -32,6 +32,45 @@ class ProcessingPipelineTest(unittest.TestCase):
         self.assertFalse(doc["contains_original_price"])
         self.assertIn("具体价格以公司正式报价为准", doc["content"])
 
+    def test_process_mock_chat_payload_uses_injected_knowledge_generator(self):
+        calls = []
+
+        def fake_generator(segment):
+            calls.append(segment)
+            return {
+                "doc_no": f"kb_{segment['segment_no']}",
+                "title": "LLM 生成标题",
+                "content": "LLM 生成正文",
+                "question_examples": ["如何使用？"],
+                "tags": ["LLM"],
+                "business_line": segment["business_line"],
+                "product_name": segment["product_name"],
+                "risk_level": "low",
+                "quality_score": 30,
+                "review_status": "pending_review",
+                "price_filtered": True,
+                "contains_price_intent": False,
+                "contains_original_price": False,
+                "is_desensitized": True,
+                "need_human_review": False,
+            }
+
+        payload = {
+            "mock_chat_id": "mock_chat_llm",
+            "business_line": "默认业务线",
+            "product_name": "默认产品",
+            "messages": [
+                {"message_id": "m1", "sender_role": "customer", "content": "如何使用？"},
+                {"message_id": "m2", "sender_role": "staff", "content": "可以先创建知识库。"},
+            ],
+        }
+
+        result = process_mock_chat_payload(payload, knowledge_generator=fake_generator)
+
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0]["segment_no"], "seg_mock_chat_llm_001")
+        self.assertEqual(result["knowledge_docs"][0]["title"], "LLM 生成标题")
+
 
 if __name__ == "__main__":
     unittest.main()

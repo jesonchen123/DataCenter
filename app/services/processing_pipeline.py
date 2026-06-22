@@ -5,7 +5,8 @@ from app.services.knowledge_service import generate_knowledge_doc
 from app.services.price_filter_service import filter_price_content
 
 
-def process_mock_chat_payload(payload: dict) -> dict:
+def process_mock_chat_payload(payload: dict, knowledge_generator=None) -> dict:
+    generator = knowledge_generator or generate_knowledge_doc
     messages = clean_messages(payload.get("messages", []))
     original_content = _join_messages(messages, "content")
     desensitized_content, contains_sensitive = desensitize_text(original_content)
@@ -29,7 +30,7 @@ def process_mock_chat_payload(payload: dict) -> dict:
         "price_risk_level": price_result.risk_level,
         "status": "generated",
     }
-    knowledge_doc = generate_knowledge_doc(segment)
+    knowledge_doc = generator(segment)
 
     return {
         "mock_chat_id": payload.get("mock_chat_id"),

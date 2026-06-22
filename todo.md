@@ -336,12 +336,12 @@
 
 ## 任务 20：处理流水线接入 LLM
 
-- [ ] 步骤 1：编写失败测试，验证 `process_mock_chat_payload` 会调用注入的 `knowledge_generator(segment)`。
-- [ ] 步骤 2：运行 `python -m unittest tests.test_processing_pipeline`，确认失败。
-- [ ] 步骤 3：改造流水线支持可注入知识生成器，默认保持确定性生成。
-- [ ] 步骤 4：改造 Celery worker，在任务执行时注入 `generate_knowledge_doc_with_llm`。
-- [ ] 步骤 5：运行 `python -m unittest tests.test_processing_pipeline tests.test_llm_knowledge_service`。
-- [ ] 步骤 6：提交，提交信息为 `feat: connect llm generation to processing pipeline`。
+- [x] 步骤 1：编写失败测试，验证 `process_mock_chat_payload` 会调用注入的 `knowledge_generator(segment)`。
+- [x] 步骤 2：运行 `python -m unittest tests.test_processing_pipeline`，确认失败。
+- [x] 步骤 3：改造流水线支持可注入知识生成器，默认保持确定性生成。
+- [x] 步骤 4：改造 Celery worker，在任务执行时注入 `generate_knowledge_doc_with_llm`。
+- [x] 步骤 5：运行 `python -m unittest tests.test_processing_pipeline tests.test_llm_knowledge_service`。
+- [x] 步骤 6：提交，提交信息为 `feat: connect llm generation to processing pipeline`。
 
 ## 任务 21：Docker LLM 主流程验证
 
