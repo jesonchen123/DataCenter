@@ -226,6 +226,29 @@ Invoke-RestMethod -Method Post -Headers $headersUser `
   http://localhost:8000/api/v1/mock-chats/custom_chat_001/process
 ```
 
+You can also use the simplified message format. In this form, `message_id` is generated automatically, `role` maps to `sender_role`, `text` maps to `content`, and `sender` maps to `sender_name`:
+
+```powershell
+$body = @{
+  mock_chat_id = 'custom_chat_simple_001'
+  messages = @(
+    @{
+      role = 'customer'
+      text = '你们这个产品多少钱？'
+    },
+    @{
+      role = 'staff'
+      text = '历史报价 9800 元，测试价格过滤。'
+    }
+  )
+} | ConvertTo-Json -Depth 10
+
+Invoke-RestMethod -Method Post -ContentType 'application/json' `
+  -Body $body `
+  -Headers $headersUser `
+  http://localhost:8000/api/v1/mock-chats
+```
+
 Check LLM call logs:
 
 ```powershell

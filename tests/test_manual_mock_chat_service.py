@@ -65,6 +65,37 @@ class ManualMockChatServiceTest(unittest.TestCase):
                 }
             )
 
+    def test_accepts_simplified_role_text_messages(self):
+        values = build_manual_mock_chat_values(
+            {
+                "mock_chat_id": "simple_chat_001",
+                "messages": [
+                    {"role": "customer", "text": "这个产品多少钱？"},
+                    {"role": "staff", "text": "具体价格以公司正式报价为准。"},
+                ],
+            }
+        )
+
+        messages = values["raw_content"]["messages"]
+        self.assertEqual(values["source_platform"], "manual_test")
+        self.assertEqual(messages[0]["message_id"], "simple_chat_001_msg_001")
+        self.assertEqual(messages[0]["sender_role"], "customer")
+        self.assertEqual(messages[0]["content"], "这个产品多少钱？")
+        self.assertEqual(messages[1]["message_id"], "simple_chat_001_msg_002")
+        self.assertEqual(messages[1]["sender_role"], "staff")
+
+    def test_accepts_sender_text_alias_for_simplified_messages(self):
+        values = build_manual_mock_chat_values(
+            {
+                "mock_chat_id": "simple_chat_002",
+                "messages": [
+                    {"role": "customer", "sender": "客户A", "text": "怎么使用？"},
+                ],
+            }
+        )
+
+        self.assertEqual(values["raw_content"]["messages"][0]["sender_name"], "客户A")
+
 
 if __name__ == "__main__":
     unittest.main()

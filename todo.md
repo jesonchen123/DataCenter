@@ -379,3 +379,12 @@
 - [x] 步骤 7：运行 Docker API 冒烟，验证创建、自定义记录查询、触发处理。
 - [x] 步骤 8：更新 README 和 todo。
 - [x] 步骤 9：提交，提交信息为 `feat: add manual mock chat creation API`。
+
+## 任务 24：兼容简化 Mock 聊天 JSON
+
+- [x] 步骤 1：编写失败测试，验证 `role/text` 简化消息格式可以转换为标准内部消息。
+- [x] 步骤 2：实现 `role -> sender_role`、`text -> content`、`sender -> sender_name` 和自动 `message_id`。
+- [x] 步骤 3：放宽 API 请求 schema，允许简化字段进入服务层校验。
+- [x] 步骤 4：更新 README 示例。
+- [x] 步骤 5：运行本地和 Docker 测试，并执行 API 冒烟。
+- [x] 步骤 6：提交，提交信息为 `feat: support simplified mock chat json`。

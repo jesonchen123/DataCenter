@@ -8,7 +8,10 @@ def build_manual_mock_chat_values(payload: dict) -> dict:
     if not isinstance(messages, list) or not messages:
         raise ValueError("messages must contain at least one message.")
 
-    normalized_messages = [_normalize_message(message) for message in messages]
+    normalized_messages = [
+        _normalize_message(mock_chat_id, message, index)
+        for index, message in enumerate(messages, start=1)
+    ]
     business_line = _optional_text(payload.get("business_line"))
     product_name = _optional_text(payload.get("product_name"))
     scenario_type = _optional_text(payload.get("scenario_type"))
@@ -32,18 +35,18 @@ def build_manual_mock_chat_values(payload: dict) -> dict:
     }
 
 
-def _normalize_message(message: dict) -> dict:
+def _normalize_message(mock_chat_id: str, message: dict, index: int) -> dict:
     if not isinstance(message, dict):
         raise ValueError("message must be an object.")
-    sender_role = _required_text(message.get("sender_role"), "sender_role")
+    sender_role = _required_text(message.get("sender_role") or message.get("role"), "sender_role")
     if sender_role not in _ALLOWED_SENDER_ROLES:
         raise ValueError("sender_role must be customer, staff, or system.")
     return {
-        "message_id": _required_text(message.get("message_id"), "message_id"),
+        "message_id": _optional_text(message.get("message_id")) or f"{mock_chat_id}_msg_{index:03d}",
         "sender_role": sender_role,
-        "sender_name": _optional_text(message.get("sender_name")),
+        "sender_name": _optional_text(message.get("sender_name") or message.get("sender")),
         "message_time": _optional_text(message.get("message_time")),
-        "content": _required_text(message.get("content"), "content"),
+        "content": _required_text(message.get("content") or message.get("text"), "content"),
     }
 
 
