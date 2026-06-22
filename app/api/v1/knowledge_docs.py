@@ -64,7 +64,7 @@ else:
         doc = get_knowledge_doc_or_404(db, knowledge_doc_id)
         reviewer_id = resolve_user_id(db, current_user.id or current_user.username)
         try:
-            apply_review(doc, payload.approved, payload.review_comment, reviewer_id, current_user.role)
+            apply_review(doc, payload.approved, payload.review_comment, reviewer_id, current_user.role, payload.scenario_type)
         except PermissionError:
             raise HTTPException(status_code=403, detail="Only managers can review knowledge docs")
         db.commit()

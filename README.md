@@ -1,13 +1,13 @@
 # Data Platform Backend MVP
 
-Backend MVP for a data middle platform that turns built-in Mock customer chats into reviewed, price-filtered RAG knowledge JSON.
+Backend MVP for a data middle platform that imports customer chat documents (JSON/Word/TXT), processes them through a cleaning and LLM pipeline, and exports reviewed, price-filtered RAG knowledge JSON.
 
 ## Scope
 
 - FastAPI backend skeleton.
 - PostgreSQL as the only long-term business database.
 - Redis only for Celery queueing.
-- Built-in Mock data only.
+- Document import via file upload (`.json`, `.docx`, `.txt`).
 - Two roles: `manager` and `normal_user`.
 - No frontend in this phase.
 
@@ -43,7 +43,7 @@ Run migrations:
 alembic upgrade head
 ```
 
-Seed default users and Mock chats:
+Seed default users:
 
 ```bash
 python -m app.db.init_db
@@ -144,14 +144,31 @@ docker compose run --rm backend python -m unittest discover -s tests
 docker compose run --rm backend python -m compileall app tests
 ```
 
-API 主流程冒烟验证示例：
+API 主流程冒烟验证示例（先上传文件再处理）：
 
 ```powershell
 $headersUser = @{ 'x-username' = 'normal_user'; 'x-role' = 'normal_user' }
 $headersManager = @{ 'x-username' = 'manager'; 'x-role' = 'manager' }
 
+# Step 1: Create a test JSON file and upload it
+$tempJson = @'
+[
+  {"role":"customer","text":"这个产品怎么使用？","sender":"客户A"},
+  {"role":"staff","text":"先确认使用场景，然后说明产品能力。","sender":"销售B"}
+]
+'@
+$tempFile = New-TemporaryFile | Rename-Item -PassThru -NewName { $_.Name + '.json' }
+Set-Content -Path $tempFile -Value $tempJson -Encoding UTF8
+
+$upload = Invoke-RestMethod -Method Post -Form @{
+  file = Get-Item -Path $tempFile
+  mock_chat_id = 'smoke_test_001'
+} -Headers $headersUser `
+  http://localhost:8000/api/v1/mock-chats/upload
+
+# Step 2: Trigger processing
 $process = Invoke-RestMethod -Method Post -Headers $headersUser `
-  http://localhost:8000/api/v1/mock-chats/mock_chat_001/process
+  http://localhost:8000/api/v1/mock-chats/smoke_test_001/process
 
 do {
   Start-Sleep -Seconds 1
@@ -159,6 +176,7 @@ do {
     "http://localhost:8000/api/v1/process-tasks/$($process.id)"
 } while ($task.status -eq 'pending' -or $task.status -eq 'processing')
 
+# Step 3: Review the generated knowledge doc
 $docsRaw = Invoke-RestMethod -Headers $headersManager `
   http://localhost:8000/api/v1/knowledge-docs
 $docs = @()
@@ -175,6 +193,7 @@ $doc = Invoke-RestMethod -Method Post -ContentType 'application/json' `
   -Headers $headersManager `
   "http://localhost:8000/api/v1/knowledge-docs/$($doc.id)/review"
 
+# Step 4: Export and verify
 $body = @{ knowledge_doc_ids = @($doc.id) } | ConvertTo-Json
 $export = Invoke-RestMethod -Method Post -ContentType 'application/json' `
   -Body $body `
@@ -200,41 +219,45 @@ Invoke-RestMethod -Headers $headersManager `
 }
 ```
 
-Create a custom Mock chat for local testing. The API only accepts the simplified message format: `role`, `sender`, and `text`. `message_id` is generated automatically, `role` is converted to `sender_role`, `text` is converted to `content`, and `sender` is converted to `sender_name`. Time fields such as `time` and `message_time` are rejected so they cannot enter raw or cleaned knowledge data.
+## Document Import
 
-Cleaned segments and generated knowledge content use the QA format `客户问：...` and `销售答：...`; sender names, timestamps, message ids, and raw chat metadata are not included in final knowledge content.
+Import customer chat data by uploading `.json`, `.docx`, or `.txt` files. The API auto-detects the format and normalizes content to the standard internal message structure.
+
+### Upload a document
 
 ```powershell
 $headersUser = @{ 'x-username' = 'normal_user'; 'x-role' = 'normal_user' }
 
-$body = @{
-  mock_chat_id = 'custom_chat_simple_001'
-  source_platform = 'manual_test'
+# Upload a JSON message array
+$result = Invoke-RestMethod -Method Post -Form @{
+  file = Get-Item -Path '.\chat_data.json'
+  mock_chat_id = 'import_001'
   business_line = '测试业务线'
   product_name = '测试产品'
   scenario_type = 'price_consulting'
-  messages = @(
-    @{
-      role = 'customer'
-      sender = '客户A'
-      text = '你们这个产品多少钱？有没有优惠？'
-    },
-    @{
-      role = 'staff'
-      sender = '销售A'
-      text = '之前基础版报价是 9800 元，可以给你打八折。'
-    }
-  )
-} | ConvertTo-Json -Depth 10
+} -Headers $headersUser `
+  http://localhost:8000/api/v1/mock-chats/upload
 
-Invoke-RestMethod -Method Post -ContentType 'application/json' `
-  -Body $body `
-  -Headers $headersUser `
-  http://localhost:8000/api/v1/mock-chats
+Write-Host "normalizer: $($result.normalizer)"
 
+# Trigger processing on the imported chat
 Invoke-RestMethod -Method Post -Headers $headersUser `
-  http://localhost:8000/api/v1/mock-chats/custom_chat_simple_001/process
+  http://localhost:8000/api/v1/mock-chats/import_001/process
 ```
+
+### Supported file formats
+
+**JSON** (`.json`): Message array `[{"role":"customer","text":"...","sender":"..."}, ...]`. Also accepts `{"messages": [...]}` wrapper. `role` must be `customer`, `staff`, or `system`.
+
+**TXT** (`.txt`): Line-based conversation with role prefixes:
+```
+客户：这个产品怎么使用？
+销售：可以先确认使用场景，然后说明产品能力。
+```
+
+**Word** (`.docx`): Paragraphs extracted from the document, parsed as role-prefixed conversation. Requires `python-docx`.
+
+When LLM is configured, unstructured text formats are normalized via AI for best results. The API response includes a `normalizer` field indicating which strategy was used: `"json_direct"`, `"llm"`, or `"rule"`.
 
 Check LLM call logs:
 
@@ -248,7 +271,7 @@ docker compose exec -T postgres psql -U postgres -d chat_data_platform `
 - `GET /health`
 - `POST /api/v1/auth/login`
 - `GET /api/v1/mock-chats`
-- `POST /api/v1/mock-chats`
+- `POST /api/v1/mock-chats/upload`
 - `GET /api/v1/mock-chats/{mock_chat_id}`
 - `POST /api/v1/mock-chats/{mock_chat_id}/process`
 - `GET /api/v1/process-tasks/{process_task_id}`

@@ -14,6 +14,7 @@ class KnowledgeDoc(Base):
         Index("idx_knowledge_docs_price_filtered", "price_filtered"),
         Index("idx_knowledge_docs_contains_original_price", "contains_original_price"),
         Index("idx_knowledge_docs_tags_gin", "tags", postgresql_using="gin"),
+        Index("idx_knowledge_docs_scenario_type", "scenario_type"),
         Index("idx_knowledge_docs_created_at", "created_at"),
     )
 
@@ -24,6 +25,7 @@ class KnowledgeDoc(Base):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     question_examples: Mapped[list | None] = mapped_column(JSONB)
     tags: Mapped[list | None] = mapped_column(JSONB)
+    scenario_type: Mapped[str | None] = mapped_column(String(100))
     business_line: Mapped[str | None] = mapped_column(String(100))
     product_name: Mapped[str | None] = mapped_column(String(100))
     risk_level: Mapped[str] = mapped_column(String(50), nullable=False, server_default="low")

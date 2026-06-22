@@ -22,6 +22,10 @@ class ProcessingPipelineTest(unittest.TestCase):
 
         self.assertEqual(result["mock_chat_id"], "mock_chat_price")
         self.assertEqual(result["status"], "success")
+        self.assertIn("segmentation_strategy", result)
+        self.assertEqual(result["segmentation_strategy"], "rule")
+        # After cleaning, "你好" removed; rule-based merges consecutive same-role
+        # → 1 Q&A pair (customer + staff merged)
         self.assertEqual(len(result["segments"]), 1)
         segment = result["segments"][0]
         doc = result["knowledge_docs"][0]
@@ -31,6 +35,37 @@ class ProcessingPipelineTest(unittest.TestCase):
         self.assertEqual(segment["price_risk_level"], RiskLevel.HIGH.value)
         self.assertFalse(doc["contains_original_price"])
         self.assertIn("具体价格以公司正式报价为准", doc["content"])
+
+    def test_processes_multi_round_conversation_into_multiple_segments(self):
+        payload = {
+            "mock_chat_id": "mock_chat_multi",
+            "business_line": "默认业务线",
+            "product_name": "默认产品",
+            "messages": [
+                {"message_id": "m1", "sender_role": "customer", "content": "这个产品怎么使用？"},
+                {"message_id": "m2", "sender_role": "staff", "content": "先登录后台再创建知识库。"},
+                {"message_id": "m3", "sender_role": "customer", "content": "支持API接入吗？"},
+                {"message_id": "m4", "sender_role": "staff", "content": "支持，提供REST接口。"},
+            ],
+        }
+
+        result = process_mock_chat_payload(payload)
+
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(len(result["segments"]), 2)
+        self.assertEqual(len(result["knowledge_docs"]), 2)
+
+        # First Q&A pair
+        seg1 = result["segments"][0]
+        self.assertEqual(seg1["segment_no"], "seg_mock_chat_multi_001")
+        self.assertEqual(seg1["customer_question"], "这个产品怎么使用？")
+        self.assertEqual(seg1["staff_answer"], "先登录后台再创建知识库。")
+
+        # Second Q&A pair
+        seg2 = result["segments"][1]
+        self.assertEqual(seg2["segment_no"], "seg_mock_chat_multi_002")
+        self.assertEqual(seg2["customer_question"], "支持API接入吗？")
+        self.assertEqual(seg2["staff_answer"], "支持，提供REST接口。")
 
     def test_process_mock_chat_payload_uses_injected_knowledge_generator(self):
         calls = []
@@ -43,6 +78,7 @@ class ProcessingPipelineTest(unittest.TestCase):
                 "content": "LLM 生成正文",
                 "question_examples": ["如何使用？"],
                 "tags": ["LLM"],
+                "scenario_type": segment.get("scenario_type", "other"),
                 "business_line": segment["business_line"],
                 "product_name": segment["product_name"],
                 "risk_level": "low",
@@ -100,7 +136,10 @@ class ProcessingPipelineTest(unittest.TestCase):
         self.assertNotIn("客户A", segment["cleaned_content"])
         self.assertNotIn("销售A", segment["cleaned_content"])
         self.assertNotIn("message_id", segment["cleaned_content"])
-        self.assertEqual(result["knowledge_docs"][0]["content"], "客户问：产品怎么使用？\n销售答：先登录后台，再创建知识库。")
+        self.assertEqual(
+            result["knowledge_docs"][0]["content"],
+            "客户问：产品怎么使用？\n销售答：先登录后台，再创建知识库。",
+        )
 
 
 if __name__ == "__main__":

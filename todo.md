@@ -417,3 +417,24 @@
 - [x] 步骤 4：更新 README，说明 `/content` 的纯问答返回格式。
 - [x] 步骤 5：运行本地和 Docker 测试，并执行 API 冒烟。
 - [x] 步骤 6：提交，提交信息为 `feat: export qa content only`。
+
+---
+
+# 第五阶段：文档导入替代 Mock 数据
+
+> 设计文档：`docs/superpowers/specs/2026-06-22-document-import-design.md`（待创建）
+>
+> 详细计划：`C:\Users\CJ\.claude\plans\lexical-juggling-patterson.md`
+
+## 任务 28：删除 Mock 数据并实现文档导入
+
+- [x] 步骤 1：删除 `mock_data_service.py`、`manual_mock_chat_service.py` 及其测试。
+- [x] 步骤 2：删除 `ManualMockChatCreateRequest` 和 `ManualMockChatMessageRequest` schema。
+- [x] 步骤 3：修改 `init_db.py`，只保留用户初始化，删除 Mock 聊天种子。
+- [x] 步骤 4：删除 `POST /api/v1/mock-chats` 端点。
+- [x] 步骤 5：实现 `document_import_service.py`（三层标准化策略：JSON直接解析 → LLM标准化 → 规则兜底）。
+- [x] 步骤 6：新增 `POST /api/v1/mock-chats/upload` 文件上传端点（支持 .json/.docx/.txt）。
+- [x] 步骤 7：更新 `requirements.txt`（新增 `python-docx`）和 `README.md`。
+- [x] 步骤 8：运行 `python -m unittest discover -s tests`，76 测试全部通过。
+- [ ] 步骤 9：Docker 集成测试和端到端冒烟验证。
+- [ ] 步骤 10：提交，提交信息为 `feat: replace mock data with document import`。

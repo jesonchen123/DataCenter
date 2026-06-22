@@ -13,6 +13,7 @@ class DialogueSegment(Base):
         Index("idx_dialogue_segments_price_risk", "price_risk_level"),
         Index("idx_dialogue_segments_contains_price", "contains_price_info"),
         Index("idx_dialogue_segments_tags_gin", "tags", postgresql_using="gin"),
+        Index("idx_dialogue_segments_scenario_type", "scenario_type"),
     )
 
     id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
@@ -28,6 +29,7 @@ class DialogueSegment(Base):
     business_line: Mapped[str | None] = mapped_column(String(100))
     product_name: Mapped[str | None] = mapped_column(String(100))
     tags: Mapped[list | None] = mapped_column(JSONB)
+    scenario_type: Mapped[str | None] = mapped_column(String(100))
     contains_sensitive_info: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
     contains_price_info: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
     price_filter_status: Mapped[str] = mapped_column(String(50), nullable=False, server_default="pending")
