@@ -240,3 +240,58 @@
 - [x] 步骤 3：标记 `todo.md` 中所有已完成任务。
 - [x] 步骤 4：运行 `git status --short`。
 - [x] 步骤 5：提交，提交信息为 `docs: document backend mvp usage`。
+
+---
+
+# 第二阶段：数据库驱动 API 主流程
+
+> 设计文档：`docs/superpowers/specs/2026-06-22-db-driven-api-main-flow-design.md`
+>
+> 详细计划：`docs/superpowers/plans/2026-06-22-db-driven-api-main-flow.md`
+
+## 任务 11：数据库序列化与任务服务
+
+- [ ] 步骤 1：先写序列化失败测试。
+- [ ] 步骤 2：运行 `python -m unittest tests.test_db_serializers`，确认失败。
+- [ ] 步骤 3：实现序列化和任务服务。
+- [ ] 步骤 4：运行 `python -m unittest tests.test_db_serializers`，确认通过。
+- [ ] 步骤 5：提交，提交信息为 `feat: add database task services`。
+
+## 任务 12：Mock 数据 API 读写 PostgreSQL
+
+- [ ] 步骤 1：编写容器内 API 冒烟脚本，验证当前接口仍返回占位数据。
+- [ ] 步骤 2：改造路由使用 `get_db` 和任务服务。
+- [ ] 步骤 3：运行 Docker 容器内测试和接口冒烟检查。
+- [ ] 步骤 4：提交，提交信息为 `feat: drive mock chat APIs from database`。
+
+## 任务 13：处理结果持久化
+
+- [ ] 步骤 1：编写失败测试，验证流水线结果会转换为待持久化结构。
+- [ ] 步骤 2：运行 `python -m unittest tests.test_persistence_service`，确认失败。
+- [ ] 步骤 3：实现持久化服务并接入 worker。
+- [ ] 步骤 4：运行单元测试和 Docker 数据库验证。
+- [ ] 步骤 5：提交，提交信息为 `feat: persist processing results`。
+
+## 任务 14：知识文档审核 API 落库
+
+- [ ] 步骤 1：编写服务层失败测试。
+- [ ] 步骤 2：实现 review service。
+- [ ] 步骤 3：改造 knowledge docs 路由。
+- [ ] 步骤 4：运行测试和 Docker API 验证。
+- [ ] 步骤 5：提交，提交信息为 `feat: add database backed review APIs`。
+
+## 任务 15：导出与审计 API 落库
+
+- [ ] 步骤 1：编写导出强校验和审计写入失败测试。
+- [ ] 步骤 2：实现审计服务和数据库导出流程。
+- [ ] 步骤 3：改造 export/audit 路由。
+- [ ] 步骤 4：运行测试和 Docker API 验证。
+- [ ] 步骤 5：提交，提交信息为 `feat: add database backed export and audit APIs`。
+
+## 任务 16：最终 Docker 主流程验证与文档
+
+- [ ] 步骤 1：运行 `docker compose run --rm backend python -m unittest discover -s tests`。
+- [ ] 步骤 2：运行 `docker compose run --rm backend python -m compileall app tests`。
+- [ ] 步骤 3：运行数据库迁移、初始化、处理任务、审核和导出冒烟验证。
+- [ ] 步骤 4：更新 README 和 todo。
+- [ ] 步骤 5：提交，提交信息为 `docs: document database driven API flow`。

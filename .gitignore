@@ -8,6 +8,7 @@ htmlcov/
 .venv/
 venv/
 .env
+.codegraph/
 .worktrees/
 dist/
 build/
