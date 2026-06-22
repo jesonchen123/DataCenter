@@ -43,6 +43,50 @@ def build_export_content(docs: list[dict], created_by: str) -> dict:
     }
 
 
+def build_export_task_values(docs: list, created_by) -> dict:
+    export_docs = [_doc_to_export_dict(doc) for doc in docs]
+    export_content = build_export_content(export_docs, created_by=str(created_by))
+    return {
+        "export_no": export_content["export_id"],
+        "export_type": export_content["export_type"],
+        "filters": export_content["filters"],
+        "export_content": export_content,
+        "document_count": len(export_docs),
+        "created_by": created_by,
+        "status": "success",
+        "completed_at": datetime.now(UTC),
+    }
+
+
+def create_export_task(db, docs: list, created_by):
+    from app.models.export_task import ExportTask
+
+    task = ExportTask(**build_export_task_values(docs, created_by))
+    db.add(task)
+    db.flush()
+    return task
+
+
+def _doc_to_export_dict(doc) -> dict:
+    return {
+        "doc_no": doc.doc_no,
+        "title": doc.title,
+        "content": doc.content,
+        "question_examples": doc.question_examples or [],
+        "tags": doc.tags or [],
+        "business_line": doc.business_line,
+        "product_name": doc.product_name,
+        "review_status": doc.review_status,
+        "risk_level": doc.risk_level,
+        "quality_score": doc.quality_score,
+        "price_filtered": doc.price_filtered,
+        "contains_price_intent": doc.contains_price_intent,
+        "contains_original_price": doc.contains_original_price,
+        "is_desensitized": doc.is_desensitized,
+        "reviewer_role": Role.MANAGER.value if doc.reviewer_id else None,
+    }
+
+
 def _serialize_doc(doc: dict) -> dict:
     return {
         "doc_id": doc.get("doc_no"),

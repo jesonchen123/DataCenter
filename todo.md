@@ -282,11 +282,11 @@
 
 ## 任务 15：导出与审计 API 落库
 
-- [ ] 步骤 1：编写导出强校验和审计写入失败测试。
-- [ ] 步骤 2：实现审计服务和数据库导出流程。
-- [ ] 步骤 3：改造 export/audit 路由。
-- [ ] 步骤 4：运行测试和 Docker API 验证。
-- [ ] 步骤 5：提交，提交信息为 `feat: add database backed export and audit APIs`。
+- [x] 步骤 1：编写导出强校验和审计写入失败测试。
+- [x] 步骤 2：实现审计服务和数据库导出流程。
+- [x] 步骤 3：改造 export/audit 路由。
+- [x] 步骤 4：运行测试和 Docker API 验证。
+- [x] 步骤 5：提交，提交信息为 `feat: add database backed export and audit APIs`。
 
 ## 任务 16：最终 Docker 主流程验证与文档
 
