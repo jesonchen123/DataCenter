@@ -1,0 +1,260 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #f0f2f5;
+}
+
+/* ── status badges ────────────────────────────── */
+.status-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide;
+}
+
+/* ── progress bar ─────────────────────────────── */
+.progress-bar {
+  @apply h-1.5 rounded-full bg-gray-200 overflow-hidden;
+}
+.progress-fill {
+  @apply h-full rounded-full;
+  transition: width 0.6s ease;
+}
+
+/* ── card hover ───────────────────────────────── */
+.card-hover {
+  transition: all 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ── risk item ────────────────────────────────── */
+.risk-item {
+  @apply border-l-[3px] border-danger p-2.5 px-3.5 rounded-sm;
+  background: rgba(255, 77, 79, 0.04);
+  transition: background 0.2s;
+}
+.risk-item:hover {
+  background: rgba(255, 77, 79, 0.07);
+}
+
+/* ── tables ───────────────────────────────────── */
+th {
+  @apply font-medium text-xs text-gray-500 text-left px-3.5 py-3 border-b border-gray-200 bg-gray-50;
+}
+td {
+  @apply text-[13px] text-gray-700 px-3.5 py-2.5 border-b border-gray-100 leading-5;
+}
+tr:hover td {
+  background: #f5f8ff;
+}
+
+/* ── sidebar items ────────────────────────────── */
+.sidebar-item {
+  transition: all 0.2s ease;
+  @apply rounded-lg mx-2 py-[10px] px-4 relative cursor-pointer font-medium no-underline;
+  color: #a0a0b8;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.sidebar-item.active {
+  background: rgba(0, 102, 204, 0.25);
+  color: #4da6ff;
+  font-weight: 600;
+}
+.sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 24px;
+  background: #0066CC;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── role button ──────────────────────────────── */
+.role-btn {
+  transition: all 0.2s ease;
+  @apply py-1.5 px-4 rounded-md text-[13px] font-medium cursor-pointer border;
+  border-color: #e0e0e0;
+  background: #fff;
+  color: #555;
+}
+.role-btn:hover {
+  border-color: #0066CC;
+  color: #0066CC;
+}
+.role-btn.active {
+  background: #0066CC;
+  color: #fff;
+  border-color: #0066CC;
+  font-weight: 600;
+}
+
+/* ── scrollbar ────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* ── drop zone ────────────────────────────────── */
+.drop-zone {
+  border: 2px dashed #d0d7e2;
+  border-radius: 12px;
+  background: #f5f8ff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.drop-zone:hover {
+  border-color: #0066CC;
+  background: #eef4ff;
+}
+
+/* ── toggle switch ────────────────────────────── */
+.toggle-switch {
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  background: #d0d5dd;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.25s ease;
+  flex-shrink: 0;
+}
+.toggle-switch.active {
+  background: #0066CC;
+}
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+.toggle-switch.active::after {
+  transform: translateX(18px);
+}
+
+/* ── action buttons (hover on table rows) ─────── */
+.action-btn {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: none;
+  border: 1px solid transparent;
+  background: transparent;
+}
+tr:hover .action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.action-btn.preview {
+  color: #0066CC;
+}
+.action-btn.preview:hover {
+  background: #e6f0ff;
+}
+.action-btn.delete {
+  color: #ff4d4f;
+}
+.action-btn.delete:hover {
+  background: #fff1f0;
+}
+
+/* ── pulse animation ──────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ── timeline dot ─────────────────────────────── */
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.timeline-dot.completed {
+  background: #52c41a;
+}
+.timeline-dot.active {
+  background: #0066CC;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+}
+.timeline-dot.pending {
+  background: #d9d9d9;
+}
+
+/* ── log entry ────────────────────────────────── */
+.log-entry {
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+/* ── detail panel slide-in ────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── review center ────────────────────────────── */
+.review-list-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  position: relative;
+}
+.review-list-item:hover {
+  background: #f5f8ff;
+}
+.review-list-item.selected {
+  background: #e6f4ff;
+  border-left: 3px solid #0066CC;
+  padding-left: 13px;
+}
+.review-list-item:last-child {
+  border-bottom: none;
+}
+
+.doc-preview-block::-webkit-scrollbar {
+  width: 4px;
+}
+.doc-preview-block::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 2px;
+}
+
+/* ── knowledge base ────────────────────────────── */
+.knowledge-timeline-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  flex-shrink: 0;
+}
